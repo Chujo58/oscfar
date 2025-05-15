@@ -8,19 +8,12 @@ permalink: /
 
 # `oscfar`
 
-{: .warning }
-
-> HALLO THERE
-
 <p align=center>
 <a target="_blank" href="https://www.python.org/downloads/" title="Python version"><img src="https://img.shields.io/badge/python-%3E=_3.8-green.svg"></a>
 <a target="_blank" href="https://pypi.org/project/oscfar/" title="PyPI version"><img src="https://img.shields.io/pypi/v/oscfar?logo=pypi"></a>
 </p>
 
 OSCFAR (Order Statistic Constant False Alarm Rate) is a radar signal processing technique used for target detection. It adaptively estimates the noise or clutter power in the vicinity of a potential target and sets a detection threshold accordingly, maintaining a constant false alarm rate regardless of the background noise characteristics.
-
-1. TOC
-   {:toc}
 
 ## Getting Started
 
