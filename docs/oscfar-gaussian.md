@@ -7,14 +7,13 @@ nav_order: 6
 <a name="oscfar-gaussian_fit"></a>
 
 ## 🅼 oscfar\.gaussian_fit
-
--   **Functions:**
-    -   🅵 [sum_of_gaussians](#oscfar-gaussian_fit-sum_of_gaussians)
-    -   🅵 [sum_of_scattered_gaussians](#oscfar-gaussian_fit-sum_of_scattered_gaussians)
-    -   🅵 [find_best_multi_gaussian_fit](#oscfar-gaussian_fit-find_best_multi_gaussian_fit)
-    -   🅵 [find_best_multi_gaussian_fit_combinatorial](#oscfar-gaussian_fit-find_best_multi_gaussian_fit_combinatorial)
+{: .no_toc }
 
 ### Functions
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
 
 <a name="oscfar-gaussian_fit-sum_of_gaussians"></a>
 

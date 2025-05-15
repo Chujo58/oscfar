@@ -7,15 +7,13 @@ nav_order: 3
 <a name="oscfar-cfar"></a>
 
 ## 🅼 oscfar\.cfar
-
 {: .no_toc }
 
 ### Functions
-
-{: .no_toc }
+{: .no_toc .text-delta }
 
 1. TOC
-   {:toc}
+{:toc}
 
 <a name="oscfar-cfar-os_cfar_1d"></a>
 

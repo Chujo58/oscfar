@@ -7,20 +7,13 @@ nav_order: 5
 <a name="oscfar-filters"></a>
 
 ## 🅼 oscfar\.filters
-
--   **Functions:**
-    -   🅵 [remove_baseline_peaks](#oscfar-filters-remove_baseline_peaks)
-    -   🅵 [median_filter](#oscfar-filters-median_filter)
-    -   🅵 [lowpass_filter](#oscfar-filters-lowpass_filter)
-    -   🅵 [highpass_filter](#oscfar-filters-highpass_filter)
-    -   🅵 [group_close_peaks](#oscfar-filters-group_close_peaks)
-    -   🅵 [find_representative_peaks](#oscfar-filters-find_representative_peaks)
-    -   🅵 [verify_peaks_snr](#oscfar-filters-verify_peaks_snr)
-    -   🅵 [enforce_min_distance](#oscfar-filters-enforce_min_distance)
-    -   🅵 [filter_peaks_by_extent_1d](#oscfar-filters-filter_peaks_by_extent_1d)
-    -   🅵 [moving_average_filter](#oscfar-filters-moving_average_filter)
+{: .no_toc }
 
 ### Functions
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
 
 <a name="oscfar-filters-remove_baseline_peaks"></a>
 

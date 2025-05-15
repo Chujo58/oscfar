@@ -7,15 +7,13 @@ nav_order: 7
 <a name="oscfar-utils"></a>
 
 ## 🅼 oscfar\.utils
-
--   **Classes:**
-    -   🅲 [NpzReader](#oscfar-utils-NpzReader)
-    -   🅲 [NpzWriter](#oscfar-utils-NpzWriter)
-    -   🅲 [Peaks](#oscfar-utils-Peaks)
-    -   🅲 [WaterFallAxes](#oscfar-utils-WaterFallAxes)
-    -   🅲 [WaterFallGrid](#oscfar-utils-WaterFallGrid)
+{: .no_toc }
 
 ### Classes
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
 
 <a name="oscfar-utils-NpzReader"></a>
 

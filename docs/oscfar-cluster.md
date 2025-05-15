@@ -7,11 +7,13 @@ nav_order: 4
 <a name="oscfar-cluster"></a>
 
 ## 🅼 oscfar\.cluster
-
--   **Functions:**
-    -   🅵 [cluster_peaks](#oscfar-cluster-cluster_peaks)
+{: .no_toc }
 
 ### Functions
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
 
 <a name="oscfar-cluster-cluster_peaks"></a>
 
