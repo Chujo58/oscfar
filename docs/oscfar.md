@@ -1,7 +1,7 @@
 ---
 title: OS-CFAR
 layout: page
-nav_order: 2
+parent: Documentation
 ---
 
 <a name="oscfar"></a>

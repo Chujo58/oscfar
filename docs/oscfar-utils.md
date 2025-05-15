@@ -1,7 +1,7 @@
 ---
 title: Utilities
 layout: page
-nav_order: 7
+parent: Documentation
 ---
 
 <a name="oscfar-utils"></a>
