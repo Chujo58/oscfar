@@ -1,7 +1,8 @@
 ---
-title: CFAR
+title: CFAR Algorithms
 layout: page
 parent: Documentation
+nav_order: 2
 ---
 
 <a name="oscfar-cfar"></a>

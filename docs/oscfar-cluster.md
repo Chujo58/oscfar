@@ -2,6 +2,7 @@
 title: Clustering
 layout: page
 parent: Documentation
+nav_order: 4
 ---
 
 <a name="oscfar-cluster"></a>

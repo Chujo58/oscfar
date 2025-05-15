@@ -2,6 +2,7 @@
 title: Fitting
 layout: page
 parent: Documentation
+nav_order: 5
 ---
 
 <a name="oscfar-gaussian_fit"></a>

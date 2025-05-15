@@ -2,6 +2,7 @@
 title: Filtering
 layout: page
 parent: Documentation
+nav_order: 3
 ---
 
 <a name="oscfar-filters"></a>

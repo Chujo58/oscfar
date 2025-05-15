@@ -1,7 +1,8 @@
 ---
-title: OS-CFAR
+title: General functions
 layout: page
 parent: Documentation
+nav_order: 1
 ---
 
 <a name="oscfar"></a>
