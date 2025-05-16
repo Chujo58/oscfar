@@ -91,38 +91,47 @@ class NpzWriter:
                       - 'burst_width': Intrinsic width of the burst.
                       - 'spectral_running': Spectral index of the burst.
         """
+        if "arrival_time" not in kwargs:
+            raise KeyError(
+                f"Cannot update parameters if number of ToAs is not provided. Please use the key 'arrival_time'."
+            )
 
-        if "amplitude" in kwargs:
-            self.burst_parameters["amplitude"] = kwargs["amplitude"]
-        if "dm" in kwargs:
-            self.burst_parameters["dm"] = kwargs["dm"]
-        if "scattering_timescale" in kwargs:
-            self.burst_parameters["scattering_timescale"] = kwargs[
-                "scattering_timescale"
-            ]
-        if "arrival_time" in kwargs:
-            self.burst_parameters["arrival_time"] = kwargs["arrival_time"]
-        if "burst_width" in kwargs:
-            self.burst_parameters["burst_width"] = kwargs["burst_width"]
-        if "spectral_running" in kwargs:
-            self.burst_parameters["spectral_running"] = kwargs["spectral_running"]
+        # if "amplitude" in kwargs:
+        #     self.burst_parameters["amplitude"] = kwargs["amplitude"]
+        # if "dm" in kwargs:
+        #     self.burst_parameters["dm"] = kwargs["dm"]
+        # if "scattering_timescale" in kwargs:
+        #     self.burst_parameters["scattering_timescale"] = kwargs[
+        #         "scattering_timescale"
+        #     ]
+        # if "arrival_time" in kwargs:
+        #     self.burst_parameters["arrival_time"] = kwargs["arrival_time"]
+        # if "burst_width" in kwargs:
+        #     self.burst_parameters["burst_width"] = kwargs["burst_width"]
+        # if "spectral_running" in kwargs:
+        #     self.burst_parameters["spectral_running"] = kwargs["spectral_running"]
 
-        number_of_components = len(self.burst_parameters["arrival_time"])
+        number_of_components = len(kwargs["arrival_time"])
+
         for param in self.burst_parameters:
-            if type(self.burst_parameters[param]) != list:
-                self.burst_parameters[param] = [
-                    self.burst_parameters[param]
-                ] * number_of_components
-
-            if len(self.burst_parameters[param]) != number_of_components:
-                if param in ["arrival_time", "burst_width", "scattering_timescale"]:
+            if param in kwargs:
+                if len(kwargs[param]) != number_of_components:
                     raise ValueError(
-                        f"Unexpected length of {len(self.burst_parameters[param])} for parameter {param} when {number_of_components} expected."
+                        f"Unexpected length of {len(kwargs[param])} for parameter {param} when {number_of_components} expected."
                     )
-                else:
+
+                self.burst_parameters[param] = kwargs[
+                    param
+                ]  # Safely put the kwargs' data into the burst parameters
+            else:
+                if type(self.burst_parameters[param]) != list:
                     self.burst_parameters[param] = [
-                        self.burst_parameters[param][0]
+                        self.burst_parameters[param]
                     ] * number_of_components
+                else:
+                    self.burst_parameters[param] += [
+                        self.burst_parameters[param][-1]
+                    ] * (number_of_components - len(self.burst_parameters[param]))
 
     def save(self, new_filepath: str):
         """
