@@ -3,7 +3,7 @@ from sklearn.cluster import DBSCAN
 import numpy as np
 
 
-def cluster_peaks(peak_positions, peak_heights, n, max_e=0.7):
+def cluster_peaks(peak_positions, peak_heights, n, max_e=0.7, verbose=False):
     """
     Clusters peaks based on their positions and heights using DBSCAN.
 
@@ -14,6 +14,7 @@ def cluster_peaks(peak_positions, peak_heights, n, max_e=0.7):
         max_e (float, optional): The maximum distance between two samples for
                                  one to be considered as in the neighborhood
                                  of the other. Defaults to 0.7.
+        verbose (bool, optional): If True, print the number of clusters found. Defaults to False.
 
     Returns:
         list: A list of representative peak positions, one from each cluster.
@@ -30,7 +31,8 @@ def cluster_peaks(peak_positions, peak_heights, n, max_e=0.7):
     num_dbscan_clusters = len(set(dbscan_cluster_labels)) - (
         1 if -1 in dbscan_cluster_labels else 0
     )
-    print(f"Number of clusters found by DBSCAN: {num_dbscan_clusters}")
+    if verbose:
+        print(f"Number of clusters found by DBSCAN: {num_dbscan_clusters}")
 
     clustered_groups = {}
     for ind, label in enumerate(dbscan_cluster_labels):
