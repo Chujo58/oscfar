@@ -1,8 +1,8 @@
-__version__ = "1.0.7"
+__version__ = "1.0.8"
 
 from setuptools import setup
 
-description = open("readme.md").read()
+description = open("README.md").read()
 
 setup(
     name="oscfar",
@@ -13,7 +13,7 @@ setup(
     author="Chloé Legué",
     author_email="chloe.legue@mail.mcgill.ca",
     packages=["oscfar"],
-    package_data={"": ["readme.md"]},
+    package_data={"": ["README.md"]},
     package_dir={
         "oscfar": ".",
     },
