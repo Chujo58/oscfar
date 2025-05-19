@@ -24,13 +24,14 @@ class NpzReader(DataReader):
             factor (int): Downsampling factor applied to the data.
         """
 
-        self.__fname = fname
+        self.fname = fname
 
         temp = np.load(fname, allow_pickle=True)
         self.metadata = temp["metadata"].tolist()
         temp.close()
 
         super().__init__(fname)
+        self.load_data()
         self.downsampling_factor = factor
 
     def __repr__(self):
@@ -38,23 +39,30 @@ class NpzReader(DataReader):
         Returns a string representation of the NpzReader object.
         """
 
-        return f"{self.__class__.__name__}(fname='{self.__fname}', file_downsampling={self.downsampling_factor})"
+        return f"{self.__class__.__name__}(fname='{self.fname}', file_downsampling={self.downsampling_factor})"
 
     def __str__(self):
         """
         Returns a string representation of the NpzReader object.
         """
 
-        return f"(fname='{self.__fname}', file_downsampling={self.downsampling_factor})"
+        return f"(fname='{self.fname}', file_downsampling={self.downsampling_factor})"
 
 
-class NpzWriter:
+class NpzWriter(DataReader):
     """
-    Class for writing data to .npz files, typically after processing.
+    Class for writing and manipulating .npz files containing spectrogram data.
+
+    Inherits from fitburst.backend.generic.DataReader.
 
     Attributes:
-        reader (NpzReader): An instance of NpzReader containing the original data.
-        burst_parameters (dict): Dictionary of burst parameters to be saved.
+        burst_parameters (dict): Parameters of the burst, such as amplitude,
+                                 dispersion measure, scattering timescale, etc.
+        metadata (dict): Metadata associated with the data.
+        dm_index (int): Index for the dispersion measure parameter.
+        scattering_index (int): Index for the scattering index parameter.
+        spectral_index (int): Index for the spectral index parameter.
+        ref_freq (float): Reference frequency for spectral index calculations.
     """
 
     dm_index = -2
@@ -62,20 +70,106 @@ class NpzWriter:
     spectral_index = 0
     ref_freq = 400
 
-    def __init__(self, original_data: NpzReader):
+    def __init__(self, file_or_reader):
         """
-        Initializes the NpzWriter with the given NpzReader instance.
+        Initializes the NpzWriter with the given .npz file.
 
         Args:
-            original_data (NpzReader): An instance of NpzReader containing the
-                                       original data to be processed and saved.
+            file_or_reader (str or NpzReader): Path to the .npz file or NpzReader made for file
+        """
+        if type(file_or_reader) == str:
+            self.fname = file_or_reader
+
+            temp = np.load(file_or_reader, allow_pickle=True)
+            self.metadata = temp["metadata"].tolist()
+            temp.close()
+
+            super().__init__(file_or_reader)
+            self.load_data()
+
+        if type(file_or_reader) == NpzReader:
+            self.fname = file_or_reader.fname
+
+            temp = np.load(self.fname, allow_pickle=True)
+            self.metadata = temp["metadata"].tolist()
+            temp.close()
+
+            super().__init__(file_or_reader.fname)
+            self.load_data()
+
+    def remove_baseline(self, percent, step=0.05, verbose=False):
+        """
+        Removes baseline noise from the data by iteratively trimming the edges.
+
+        This method iteratively removes data from the beginning and end of the
+        spectrogram until the signal-to-noise ratio (SNR) of the remaining data
+        falls below a threshold.
+
+        Args:
+            percent (float): Initial percentage of data to consider as baseline
+                             from each end.
+            step (float, optional): Step size for reducing the percentage. Defaults to 0.05.
+            verbose (bool, optional): If True, prints SNR and percentage information
+                                     during the process. Defaults to False.
         """
 
-        self.reader = original_data
-        if self.reader.data_full is None:
-            self.reader.load_data()
+        data_start = self.data_full[:, 0 : int(percent * len(self.times))]
+        data_end = self.data_full[:, -int(percent * len(self.times)) :]
 
-        self.burst_parameters = self.reader.burst_parameters
+        ts_start = np.sum(data_start, 0)
+        ts_end = np.sum(data_end, 0)
+
+        snr_start = self.__calculate_snr(ts_start)
+        snr_end = self.__calculate_snr(ts_end)
+
+        if verbose:
+            print("Current SNRs:")
+            print(snr_start, snr_end)
+            print("Current percent: ", percent)
+            print("")
+
+        start_done = False
+        end_done = False
+
+        while True:
+            percent -= np.abs(step)
+            if percent < 0:
+                break
+
+            if not start_done:
+                data_start = self.data_full[:, 0 : int(percent * len(self.times))]
+                ts_start = np.sum(data_start, 0)
+                snr_start = self.__calculate_snr(ts_start)
+            if not end_done:
+                data_end = self.data_full[:, -int(percent * len(self.times)) :]
+                ts_end = np.sum(data_end, 0)
+                snr_end = self.__calculate_snr(ts_end)
+
+            if verbose:
+                print("Current SNRs:")
+                print(snr_start, snr_end)
+                print("Current percent: ", percent)
+                print("")
+
+            if snr_start > 0.3 and snr_end > 0.3:
+                continue
+            elif snr_start > 0.3 and not end_done:
+                self.data_full = self.data_full[:, : int(percent * len(self.times))]
+                self.times = self.times[: int(percent * len(self.times))]
+
+                end_done = True
+            elif snr_end > 0.3 and not start_done:
+                self.data_full = self.data_full[:, int(percent * len(self.times)) :]
+                self.times = self.times[int(percent * len(self.times)) :]
+
+                start_done = True
+            else:
+                continue
+
+        self.metadata["num_time"] = self.data_full.shape[1]
+
+    def __calculate_snr(self, array):
+        return np.mean(array) / np.std(array)
 
     def update_burst_parameters(self, **kwargs):
         """
@@ -95,21 +189,6 @@ class NpzWriter:
             raise KeyError(
                 f"Cannot update parameters if number of ToAs is not provided. Please use the key 'arrival_time'."
             )
-
-        # if "amplitude" in kwargs:
-        #     self.burst_parameters["amplitude"] = kwargs["amplitude"]
-        # if "dm" in kwargs:
-        #     self.burst_parameters["dm"] = kwargs["dm"]
-        # if "scattering_timescale" in kwargs:
-        #     self.burst_parameters["scattering_timescale"] = kwargs[
-        #         "scattering_timescale"
-        #     ]
-        # if "arrival_time" in kwargs:
-        #     self.burst_parameters["arrival_time"] = kwargs["arrival_time"]
-        # if "burst_width" in kwargs:
-        #     self.burst_parameters["burst_width"] = kwargs["burst_width"]
-        # if "spectral_running" in kwargs:
-        #     self.burst_parameters["spectral_running"] = kwargs["spectral_running"]
 
         number_of_components = len(kwargs["arrival_time"])
 
@@ -147,9 +226,9 @@ class NpzWriter:
         with open(new_filepath, "wb") as f:
             np.savez(
                 f,
-                data_full=self.reader.data_full,
+                data_full=self.data_full,
                 burst_parameters=self.burst_parameters,
-                metadata=self.reader.metadata,
+                metadata=self.metadata,
             )
         print(f"Saved file at {new_filepath} successfully.")
 

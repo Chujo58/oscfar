@@ -16,3 +16,4 @@ vendor/
 dist/
 oscfar.egg-info
 temp.txt
+__pycache__
