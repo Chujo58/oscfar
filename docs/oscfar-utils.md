@@ -68,6 +68,7 @@ def __str__(self):
 
 Returns a string representation of the NpzReader object\.
 <a name="oscfar-utils-NpzWriter"></a>
+### 🅲 oscfar\.utils\.NpzWrite
 
 ```python
 class NpzWriter(DataReader):
