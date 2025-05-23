@@ -69,38 +69,61 @@ def __str__(self):
 Returns a string representation of the NpzReader object\.
 <a name="oscfar-utils-NpzWriter"></a>
 
-### 🅲 oscfar\.utils\.NpzWriter
-
 ```python
-class NpzWriter:
+class NpzWriter(DataReader):
 ```
 
-Class for writing data to \.npz files, typically after processing\.
+Class for writing and manipulating \.npz files containing spectrogram data\.
+
+Inherits from fitburst\.backend\.generic\.DataReader\.
 
 **Attributes:**
 
--   **reader** (`NpzReader`): An instance of NpzReader containing the original data\.
--   **burst_parameters** (`dict`): Dictionary of burst parameters to be saved\.
+- **burst_parameters** (`dict`): Parameters of the burst, such as amplitude,
+dispersion measure, scattering timescale, etc\.
+- **metadata** (`dict`): Metadata associated with the data\.
+- **dm_index** (`int`): Index for the dispersion measure parameter\.
+- **scattering_index** (`int`): Index for the scattering index parameter\.
+- **spectral_index** (`int`): Index for the spectral index parameter\.
+- **ref_freq** (`float`): Reference frequency for spectral index calculations\.
 
 **Functions:**
 
 <a name="oscfar-utils-NpzWriter-__init__"></a>
-
 #### 🅵 oscfar\.utils\.NpzWriter\.\_\_init\_\_
 
 ```python
-def __init__(self, original_data: NpzReader):
+def __init__(self, file_or_reader):
 ```
 
-Initializes the NpzWriter with the given NpzReader instance\.
+Initializes the NpzWriter with the given \.npz file\.
 
 **Parameters:**
 
--   **original_data** (`NpzReader`): An instance of NpzReader containing the
-    original data to be processed and saved\.
-    <a name="oscfar-utils-NpzWriter-update_burst_parameters"></a>
+- **file_or_reader** (`str or NpzReader`): Path to the \.npz file or NpzReader made for file
 
-#### 🅵 oscfar\.utils\.NpzWriter\.update_burst_parameters
+<a name="oscfar-utils-NpzWriter-remove_baseline"></a>
+#### 🅵 oscfar\.utils\.NpzWriter\.remove\_baseline
+
+```python
+def remove_baseline(self, percent, step = 0.05, verbose = False):
+```
+
+Removes baseline noise from the data by iteratively trimming the edges\.
+
+This method iteratively removes data from the beginning and end of the
+spectrogram until the signal-to-noise ratio \(SNR\) of the remaining data
+falls below a threshold\.
+
+**Parameters:**
+
+- **percent** (`float`): Initial percentage of data to consider as baseline
+from each end\.
+- **step** (`float`) (default: `0.05`): Step size for reducing the percentage\. Defaults to 0\.05\.
+- **verbose** (`bool`): If True, prints SNR and percentage information
+during the process\. Defaults to False\.
+<a name="oscfar-utils-NpzWriter-update_burst_parameters"></a>
+#### 🅵 oscfar\.utils\.NpzWriter\.update\_burst\_parameters
 
 ```python
 def update_burst_parameters(self, **kwargs):
@@ -110,16 +133,15 @@ Updates the burst parameters with the provided keyword arguments\.
 
 **Parameters:**
 
--   \***\*kwargs**: Keyword arguments representing burst parameters to update\.
-    Possible keys include:
--   'amplitude': Amplitude of the burst\.
--   'dm': Dispersion measure of the burst\.
--   'scattering_timescale': Scattering timescale of the burst\.
--   'arrival_time': Arrival time of the burst\.
--   'burst_width': Intrinsic width of the burst\.
--   'spectral_running': Spectral index of the burst\.
-    <a name="oscfar-utils-NpzWriter-save"></a>
-
+- ****kwargs**: Keyword arguments representing burst parameters to update\.
+Possible keys include:
+- 'amplitude': Amplitude of the burst\.
+- 'dm': Dispersion measure of the burst\.
+- 'scattering\_timescale': Scattering timescale of the burst\.
+- 'arrival\_time': Arrival time of the burst\.
+- 'burst\_width': Intrinsic width of the burst\.
+- 'spectral\_running': Spectral index of the burst\.
+<a name="oscfar-utils-NpzWriter-save"></a>
 #### 🅵 oscfar\.utils\.NpzWriter\.save
 
 ```python
@@ -130,10 +152,10 @@ Saves the processed data and burst parameters to a new \.npz file\.
 
 **Parameters:**
 
--   **new_filepath** (`str`): Path to the new \.npz file where the data
-    will be saved\.
-    <a name="oscfar-utils-Peaks"></a>
+- **new_filepath** (`str`): Path to the new \.npz file where the data
+will be saved\.
 
+<a name="oscfar-utils-Peaks"></a>
 ### 🅲 oscfar\.utils\.Peaks
 
 ```python
@@ -150,7 +172,6 @@ Class to hold results from OS-CFAR\.
 **Functions:**
 
 <a name="oscfar-utils-Peaks-__init__"></a>
-
 #### 🅵 oscfar\.utils\.Peaks\.\_\_init\_\_
 
 ```python
@@ -163,8 +184,8 @@ Initializes the Peaks object with the result from OS-CFAR\.
 
 -   **oscfar_result** (`tuple`): A tuple containing the detected peak indices
     and the threshold array\.
-    <a name="oscfar-utils-WaterFallAxes"></a>
-
+    
+<a name="oscfar-utils-WaterFallAxes"></a>
 ### 🅲 oscfar\.utils\.WaterFallAxes
 
 ```python

@@ -1,0 +1,22 @@
+---
+title: Plotting the data quickly
+layout: page
+parent: How to use oscfar
+nav_order: 1
+---
+
+## Plotting the data quickly
+If your data is saved under a `.npz` format like [fitburst](https://github.com/CHIMEFRB/fitburst) uses, the data can be plotted quickly.
+
+There are two main plotting functions, one to create a single image of the data and another to create a grid view of multiple datasets at once.
+
+### oscfar.waterfall_axes
+```python
+import oscfar as ocf
+
+filepath = ... #Path to the .npz file
+down = ... #Downsampling factor of the .npz file
+reader = ocf.reader(filepath, down)
+
+ax = ocf.waterfall_axes(reader)
+```
