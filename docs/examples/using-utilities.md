@@ -2,7 +2,7 @@
 title: Plotting the data quickly
 layout: page
 parent: How to use oscfar
-nav_order: 1
+nav_order: 2
 ---
 
 ## Plotting the data quickly

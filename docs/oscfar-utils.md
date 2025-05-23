@@ -94,7 +94,7 @@ dispersion measure, scattering timescale, etc\.
 #### 🅵 oscfar\.utils\.NpzWriter\.\_\_init\_\_
 
 ```python
-def __init__(self, file_or_reader):
+def __init__(self, file_or_reader=None):
 ```
 
 Initializes the NpzWriter with the given \.npz file\.
@@ -102,6 +102,24 @@ Initializes the NpzWriter with the given \.npz file\.
 **Parameters:**
 
 - **file_or_reader** (`str or NpzReader`): Path to the \.npz file or NpzReader made for file
+
+<a name="oscfar-utils-NpzWriter-set_data"></a>
+#### 🅵 oscfar\.utils\.NpzWriter\.set\_data
+
+```python
+def set_data(self, data, times, freqs, time_res, freq_res, bad_chans = []):
+```
+
+Sets the data and metadata for a new \.npz file\.
+
+**Parameters:**
+
+- **data** (`np.ndarray`): The spectrogram data \(frequency x time\)\.
+- **times** (`np.ndarray`): Array of time values for each time sample\.
+- **freqs** (`np.ndarray`): Array of frequency values for each channel\.
+- **time_res** (`float`): Time resolution of the data\.
+- **freq_res** (`float`): Frequency resolution of the data\.
+- **bad_chans** (`list`): List of indices of bad frequency channels\. Defaults to \[\]\.
 
 <a name="oscfar-utils-NpzWriter-remove_baseline"></a>
 #### 🅵 oscfar\.utils\.NpzWriter\.remove\_baseline

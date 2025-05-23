@@ -2,6 +2,13 @@ from fitburst.backend.generic import DataReader
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import logging
+
+logger = logging.getLogger(__name__)
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 class NpzReader(DataReader):
@@ -70,13 +77,42 @@ class NpzWriter(DataReader):
     spectral_index = 0
     ref_freq = 400
 
-    def __init__(self, file_or_reader):
+    def __init__(self, file_or_reader=None):
         """
         Initializes the NpzWriter with the given .npz file.
 
         Args:
             file_or_reader (str or NpzReader): Path to the .npz file or NpzReader made for file
         """
+        if file_or_reader is None:
+            self._making_new_file = True
+            self.metadata = {
+                "bad_chans": [],
+                "freqs_bin0": 0,
+                "times_bin0": 0,
+                "is_dedispersed": True,
+                "num_freq": 0,
+                "num_time": 0,
+                "res_freq": 0,
+                "res_time": 0,
+            }
+
+            self.burst_parameters = {
+                "amplitude": [],
+                "arrival_time": [],
+                "burst_width": [],
+                "dm": [],
+                "dm_index": [],
+                "ref_freq": [],
+                "scattering_index": [],
+                "scattering_timescale": [],
+                "spectral_index": [],
+                "spectral_running": [],
+            }
+            logger.warning(f"Please use function .set_data to setup the data.")
+        else:
+            self._making_new_file = False
+
         if type(file_or_reader) == str:
             self.fname = file_or_reader
 
@@ -97,6 +133,58 @@ class NpzWriter(DataReader):
             super().__init__(file_or_reader.fname)
             self.load_data()
 
+    def set_data(self, data, times, freqs, time_res, freq_res, bad_chans=[]):
+        """
+        Sets the data and metadata for a new .npz file.
+
+        Args:
+            data (np.ndarray): The spectrogram data (frequency x time).
+            times (np.ndarray): Array of time values for each time sample.
+            freqs (np.ndarray): Array of frequency values for each channel.
+            time_res (float): Time resolution of the data.
+            freq_res (float): Frequency resolution of the data.
+            bad_chans (list, optional): List of indices of bad frequency channels.
+                                       Defaults to [].
+        """
+        if not self._making_new_file:
+            raise RuntimeError(
+                "This function can only be used when creating a new file."
+            )
+
+        if type(data) != np.ndarray:
+            data = np.array(data)
+        self.data_full = data
+        self.metadata["num_freq"] = self.data_full.shape[0]
+        self.metadata["num_time"] = self.data_full.shape[1]
+        if len(times) != self.metadata["num_time"]:
+            raise AssertionError(
+                f"Data shape does not match metadata. {len(times)} != {self.metadata['num_time']}"
+            )
+
+        if len(freqs) != self.metadata["num_freq"]:
+            raise AssertionError(
+                f"Data shape does not match metadata. {len(freqs)} != {self.metadata['num_freq']}"
+            )
+
+        self.metadata["bad_chans"] = bad_chans
+        self.metadata["freqs_bin0"] = freqs[0]
+        self.metadata["times_bin0"] = times[0]
+        self.metadata["res_freq"] = freq_res
+        self.metadata["res_time"] = time_res
+
+        self.times = times
+        self.freqs = freqs
+        self.res_time = time_res
+        self.res_freq = freq_res
+
+        self.num_freq = self.data_full.shape[0]
+        self.num_time = self.data_full.shape[1]
+
+        self.data_weights = np.ones((self.num_freq, self.num_time), dtype=float)
+        self.data_weights[bad_chans, :] = 0
+
+        self.data_loaded = True
+
     def remove_baseline(self, percent, step=0.05, verbose=False):
         """
         Removes baseline noise from the data by iteratively trimming the edges.
@@ -112,6 +200,8 @@ class NpzWriter(DataReader):
             verbose (bool, optional): If True, prints SNR and percentage information
                                      during the process. Defaults to False.
         """
+        if self._making_new_file and not self.data_loaded:
+            raise RuntimeError("Please use function .set_data to setup the data.")
 
         data_start = self.data_full[:, 0 : int(percent * len(self.times))]
         data_end = self.data_full[:, -int(percent * len(self.times)) :]
@@ -185,6 +275,9 @@ class NpzWriter(DataReader):
                       - 'burst_width': Intrinsic width of the burst.
                       - 'spectral_running': Spectral index of the burst.
         """
+        if self._making_new_file and not self.data_loaded:
+            raise RuntimeError("Please use function .set_data to setup the data.")
+
         if "arrival_time" not in kwargs:
             raise KeyError(
                 f"Cannot update parameters if number of ToAs is not provided. Please use the key 'arrival_time'."
@@ -220,6 +313,8 @@ class NpzWriter(DataReader):
             new_filepath (str): Path to the new .npz file where the data
                                 will be saved.
         """
+        if self._making_new_file and not self.data_loaded:
+            raise RuntimeError("Please use function .set_data to setup the data.")
 
         print(f"Saving file at {new_filepath}...")
 
