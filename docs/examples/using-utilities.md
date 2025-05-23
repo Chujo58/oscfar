@@ -23,3 +23,19 @@ ax.plot()
 # If you have a ocf.peaks object:
 ax.plot_time_peaks(peaks, 'red', show_thres=False)
 ```
+
+### oscfar.waterfall_grid
+```python
+import oscfar as ocf
+
+filepaths = [...] #Paths to `.npz` files
+downs = [...] #Downsampling factors of the `.npz` files
+readers = [ocf.reader(filepath, down) for filepath, down in zip(filepaths, downs)]
+peaks = [...] #ocf.peaks object for each reader above
+titles = [...] #Titles for each reader above
+
+grid = ocf.waterfall_grid(nrow, ncol)
+grid.plot(readers, peaks, titles, 'red', adjust_t=0.1, show_thres=False)
+# If you want to add a table with interesting information at the bottom of the grid view:
+grid.add_info(pd.DataFrame(interesting_data: dict))
+```
