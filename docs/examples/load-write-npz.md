@@ -27,4 +27,22 @@ reader = ocf.npz_reader(filepath, downsampling_factor)
 The data will automatically be loaded using the `DataReader.load_data()` method.
 
 ### Writing npz files
-To write `.npz` files using `oscfar`, you can either provide a filepath linking to the original data you want to modify or an `oscfar.npz_reader` object.
+To write `.npz` files using `oscfar`, you can either provide a filepath linking to the original data you want to modify or an `oscfar.npz_reader` object. You can also not specify anything to create a new file from scratch.
+
+For example:
+```python
+import oscfar as ocf
+import numpy as np
+
+#Creates a writer with the data from another file
+writer = ocf.npz_writer(filepath) 
+
+#Creates a new file from scratch and saves to "temp" file.
+w = ocf.npz_writer() 
+t = np.arange(0, 10, 0.1)
+f = np.arange(6, 10, 0.01)
+dt = np.random.rand(len(f), len(t))
+
+w.set_data(dt, t, f, 0.1, 0.01)
+w.save("temp")
+```
