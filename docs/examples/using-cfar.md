@@ -6,7 +6,36 @@ nav_order: 1
 ---
 
 ## Using CFAR Algorithms
-The code below is valid for the following methods: 
-- `oscfar.os_cfar`
-- `oscfar.vwindow_os_cfar`
-- `oscfar.do_os_cfar`
+### oscfar.do_os_cfar
+```python
+import oscfar as ocf
+data = ... #A numpy 2D array (frequency vs time).
+
+results = ocf.do_os_cfar(**{
+    'data': data,
+    'guard_cells': 1,
+    'train_cells': 10,
+    'rank_k': 0.75,
+    'threshold_factor': 1.05,
+    'averaging': 2,
+    'min_dist': 5,
+    'min_snr': 2,
+    'baseline': 0.15,
+})
+# Note you can also do the following to use the best_params dictionary:
+results = ocf.do_os_cfar(data, **ocf.best_params, min_dist=5) #Output: ocf.peaks
+```
+
+### oscfar.os_cfar
+```python
+import oscfar as ocf
+data = ... #A numpy !D array (time series).
+
+results = ocf.os_cfar(**{
+    'data': data,
+    'guard_cells': 1,
+    'train_cells': 10,
+    'rank_k': 0.75,
+    'threshold_factor': 1.05,
+}) #Output: tuple(peaks indices, threshold)
+```
