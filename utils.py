@@ -257,6 +257,7 @@ class NpzWriter(DataReader):
                 continue
 
         self.metadata["num_time"] = self.data_full.shape[1]
+        self.num_time = self.data_full.shape[1]
 
     def __calculate_snr(self, array):
         return np.mean(array) / np.std(array)
