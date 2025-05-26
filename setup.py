@@ -1,4 +1,4 @@
-__version__ = "1.0.13"
+__version__ = "1.1.1"
 
 from setuptools import setup
 
@@ -23,6 +23,7 @@ setup(
         "matplotlib",
         "pandas",
         "scikit-learn",
+        "statsmodels",
     ],
     python_requires=">=3.8",
     include_package_data=True,

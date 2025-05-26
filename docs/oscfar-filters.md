@@ -288,3 +288,35 @@ but edge effects might be present where the window doesn't fully overlap\.
 
 -   **ValueError**: If input data is not a 1D numpy array or if window_size
     is not a positive integer\.
+
+<a name="oscfar-filters-lowess_filter"></a>
+### 🅵 oscfar\.filters\.lowess\_filter
+
+```python
+def lowess_filter(xdata, ydata, smoothing_factor):
+```
+
+Applies a Locally Weighted Scatterplot Smoothing \(LOWESS\) filter to the data\.
+
+LOWESS is a non-parametric regression method that fits simple models to
+localized subsets of the data to build up a function that describes the
+deterministic part of the variation in the data, point by point\.
+
+**Parameters:**
+
+- **xdata** (`np.ndarray`): 1D array of independent variable values \(e\.g\., time\)\.
+- **ydata** (`np.ndarray`): 1D array of dependent variable values \(e\.g\., signal\)\.
+Must have the same length as xdata\.
+- **smoothing_factor** (`float`): The fraction of the data to use when
+estimating the local regression\. Should be
+between 0 and 1\. Larger values result in
+smoother curves\.
+
+**Returns:**
+
+- `np.ndarray`: The smoothed y-values, corresponding to the xdata points\.
+
+**Raises:**
+
+- **ValueError**: If xdata or ydata are not 1D numpy arrays, if they have
+different lengths, or if smoothing\_factor is not between 0 and 1\.

@@ -3,6 +3,7 @@ import pandas as pd
 
 from scipy.signal import butter, filtfilt, medfilt
 from scipy.stats import median_abs_deviation
+from statsmodels.nonparametric.smoothers_lowess import lowess
 
 
 def remove_baseline_peaks(
@@ -513,3 +514,43 @@ def moving_average_filter(data, window_size):
     filtered_data = np.convolve(data, kernel, mode="same")
 
     return filtered_data
+
+
+def lowess_filter(xdata, ydata, smoothing_factor):
+    """
+    Applies a Locally Weighted Scatterplot Smoothing (LOWESS) filter to the data.
+
+    LOWESS is a non-parametric regression method that fits simple models to
+    localized subsets of the data to build up a function that describes the
+    deterministic part of the variation in the data, point by point.
+
+    Args:
+        xdata (np.ndarray): 1D array of independent variable values (e.g., time).
+        ydata (np.ndarray): 1D array of dependent variable values (e.g., signal).
+                            Must have the same length as xdata.
+        smoothing_factor (float): The fraction of the data to use when
+                                  estimating the local regression. Should be
+                                  between 0 and 1. Larger values result in
+                                  smoother curves.
+
+    Returns:
+        np.ndarray: The smoothed y-values, corresponding to the xdata points.
+
+    Raises:
+        ValueError: If xdata or ydata are not 1D numpy arrays, if they have
+                    different lengths, or if smoothing_factor is not between 0 and 1.
+    """
+    if not isinstance(xdata, np.ndarray) or xdata.ndim != 1:
+        raise ValueError("Input 'xdata' must be a 1D NumPy array.")
+    if not isinstance(ydata, np.ndarray) or ydata.ndim != 1:
+        raise ValueError("Input 'ydata' must be a 1D NumPy array.")
+    if len(xdata) != len(ydata):
+        raise ValueError("xdata and ydata must have the same length.")
+    if not (0 <= smoothing_factor <= 1):
+        raise ValueError("smoothing_factor must be between 0 and 1.")
+
+    # The lowess function returns a 2D array where the first column is x and the second is the smoothed y
+
+    smooth = lowess(ydata, xdata, frac=smoothing_factor)
+    x, y_smooth = smooth[..., 0], smooth[..., 1]
+    return y_smooth

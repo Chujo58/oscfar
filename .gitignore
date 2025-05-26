@@ -17,3 +17,4 @@ dist/
 oscfar.egg-info
 temp.txt
 __pycache__
+tests/
