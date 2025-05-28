@@ -21,6 +21,7 @@ results = ocf.do_os_cfar(**{
     'min_dist': 5,
     'min_snr': 2,
     'baseline': 0.15,
+    'smoothing': 'lowess'
 }) #Output: ocf.peaks
 # Note you can also do the following to use the best_params dictionary:
 results = ocf.do_os_cfar(data, **ocf.best_params, min_dist=5) #Output: ocf.peaks
