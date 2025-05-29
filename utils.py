@@ -223,6 +223,7 @@ class NpzWriter(DataReader):
         snr_end = self.__calculate_snr(ts_end)
 
         if verbose:
+            print(f"Cutoff: {cutoff}")
             print("Current SNRs:")
             print(snr_start, snr_end)
             print("Current percent: ", percent)
@@ -266,17 +267,26 @@ class NpzWriter(DataReader):
             else:
                 continue
 
+        if not start_done:
+            final_start_percent = 0
+
         # Move the arrival time:
         toa = np.array(self.burst_parameters["arrival_time"])
         toa -= (final_start_percent * len(self.times)) * self.res_time
         self.burst_parameters["arrival_time"] = toa.tolist()
 
-        self.data_full = self.data_full[
-            :,
-            int(final_start_percent * len(self.times)) : -int(
-                final_end_percent * len(self.times)
-            ),
-        ]
+        if end_done:
+            self.data_full = self.data_full[
+                :,
+                int(final_start_percent * len(self.times)) : -int(
+                    final_end_percent * len(self.times)
+                ),
+            ]
+        else:
+            self.data_full = self.data_full[
+                :, int(final_start_percent * len(self.times)) :
+            ]
+
         self.times = np.arange(self.data_full.shape[1]) * self.res_time
 
         self.metadata["num_time"] = self.data_full.shape[1]
