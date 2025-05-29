@@ -125,14 +125,12 @@ Sets the data and metadata for a new \.npz file\.
 #### 🅵 oscfar\.utils\.NpzWriter\.remove\_baseline
 
 ```python
-def remove_baseline(self, percent, step = 0.05, verbose = False):
+def remove_baseline(self, percent, step = 0.05, verbose = False, cutoff=0.3):
 ```
 
-Removes baseline noise from the data by iteratively trimming the edges\.
+Removes baseline from the start and end of the data based on SNR.
 
-This method iteratively removes data from the beginning and end of the
-spectrogram until the signal-to-noise ratio \(SNR\) of the remaining data
-falls below a threshold\.
+Iteratively reduces the percentage of data considered from the start and end until the SNR in those regions falls below a cutoff threshold. The arrival time parameter in burst_parameters is adjusted accordingly.
 
 **Parameters:**
 
@@ -141,6 +139,7 @@ from each end\.
 - **step** (`float`) (default: `0.05`): Step size for reducing the percentage\. Defaults to 0\.05\.
 - **verbose** (`bool`): If True, prints SNR and percentage information
 during the process\. Defaults to False\.
+- **cutoff** (`float`): The SNR threshold below which a region is considered baseline and removed\.Defaults to 0.3\.
 <a name="oscfar-utils-NpzWriter-update_burst_parameters"></a>
 #### 🅵 oscfar\.utils\.NpzWriter\.update\_burst\_parameters
 

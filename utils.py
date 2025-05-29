@@ -98,16 +98,16 @@ class NpzWriter(DataReader):
             }
 
             self.burst_parameters = {
-                "amplitude": [],
-                "arrival_time": [],
-                "burst_width": [],
-                "dm": [],
-                "dm_index": [],
-                "ref_freq": [],
-                "scattering_index": [],
-                "scattering_timescale": [],
-                "spectral_index": [],
-                "spectral_running": [],
+                "amplitude": [1],
+                "arrival_time": [0],
+                "burst_width": [0.0001],
+                "dm": [0],
+                "dm_index": [self.dm_index],
+                "ref_freq": [self.ref_freq],
+                "scattering_index": [self.scattering_index],
+                "scattering_timescale": [0.0001],
+                "spectral_index": [self.spectral_index],
+                "spectral_running": [0],
             }
             logger.warning(f"Please use function .set_data to setup the data.")
         else:
@@ -185,21 +185,31 @@ class NpzWriter(DataReader):
 
         self.data_loaded = True
 
-    def remove_baseline(self, percent, step=0.05, verbose=False):
+    def remove_baseline(self, percent, step=0.05, verbose=False, cutoff=0.3):
         """
-        Removes baseline noise from the data by iteratively trimming the edges.
+        Removes baseline from the start and end of the data based on SNR.
 
-        This method iteratively removes data from the beginning and end of the
-        spectrogram until the signal-to-noise ratio (SNR) of the remaining data
-        falls below a threshold.
+        Iteratively reduces the percentage of data considered from the start
+        and end until the SNR in those regions falls below a cutoff threshold.
+        The arrival time parameter in burst_parameters is adjusted accordingly.
 
         Args:
-            percent (float): Initial percentage of data to consider as baseline
-                             from each end.
-            step (float, optional): Step size for reducing the percentage. Defaults to 0.05.
-            verbose (bool, optional): If True, prints SNR and percentage information
-                                     during the process. Defaults to False.
+            percent (float): Initial percentage of data from the start and end
+                             to consider for baseline removal (between 0 and 1).
+            step (float, optional): The step size by which the percentage is
+                                    reduced in each iteration. Defaults to 0.05.
+            verbose (bool, optional): If True, prints intermediate SNR values
+                                      and percentages during the process.
+                                      Defaults to False.
+            cutoff (float, optional): The SNR threshold below which a region
+                                      is considered baseline and removed.
+                                      Defaults to 0.3.
+
+        Raises:
+            RuntimeError: If the NpzWriter is set to create a new file but
+                          data has not been loaded using .set_data().
         """
+
         if self._making_new_file and not self.data_loaded:
             raise RuntimeError("Please use function .set_data to setup the data.")
 
@@ -241,20 +251,33 @@ class NpzWriter(DataReader):
                 print("Current percent: ", percent)
                 print("")
 
-            if snr_start > 0.3 and snr_end > 0.3:
+            if start_done and end_done:
+                break
+            if snr_start > cutoff and snr_end > cutoff:
                 continue
-            elif snr_start > 0.3 and not end_done:
-                self.data_full = self.data_full[:, : int(percent * len(self.times))]
-                self.times = self.times[: int(percent * len(self.times))]
-
+            elif snr_end <= cutoff and not end_done:  # Cutting the end of the data
+                final_end_percent = percent
                 end_done = True
-            elif snr_end > 0.3 and not start_done:
-                self.data_full = self.data_full[:, int(percent * len(self.times)) :]
-                self.times = self.times[int(percent * len(self.times)) :]
-
+            elif (
+                snr_start <= cutoff and not start_done
+            ):  # Cutting the start of the data
+                final_start_percent = percent
                 start_done = True
             else:
                 continue
+
+        # Move the arrival time:
+        toa = np.array(self.burst_parameters["arrival_time"])
+        toa -= (final_start_percent * len(self.times)) * self.res_time
+        self.burst_parameters["arrival_time"] = toa.tolist()
+
+        self.data_full = self.data_full[
+            :,
+            int(final_start_percent * len(self.times)) : -int(
+                final_end_percent * len(self.times)
+            ),
+        ]
+        self.times = np.arange(self.data_full.shape[1]) * self.res_time
 
         self.metadata["num_time"] = self.data_full.shape[1]
         self.num_time = self.data_full.shape[1]
