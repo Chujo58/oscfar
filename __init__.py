@@ -1,7 +1,7 @@
 import numpy as np
 
 # Package to do OS-CFAR + Useful filters
-__version__ = "1.1.6"
+__version__ = "1.1.7"
 
 from . import cfar
 from . import filters

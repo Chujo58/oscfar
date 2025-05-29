@@ -29,13 +29,29 @@ if [ -n "$version" ]; then
 else
     echo "Error: No version provided"
     conda deactivate # Deactivate if an error occurs after successful activation
-    exit 1
+    exit 2
+fi
+
+COMMIT_MESSAGE=$2
+if [ -n "$COMMIT_MESSAGE" ]; then
+    echo "Commit message provided: $COMMIT_MESSAGE"
+else
+    echo "Error: No commit message provided"
+    conda deactivate
+    exit 2
 fi
 
 echo "Running commands in Conda environment: $CONDA_DEFAULT_ENV"
-python reload.py $version
-python -m build
-twine upload dist/*
+# python reload.py $version
+# python -m build
+# twine upload dist/*
+
+echo "Staging changes..."
+git add .
+echo "Commiting changes with message: $COMMIT_MESSAGE"
+git commit -m "$COMMIT_MESSAGE"
+echo "Pushing changes to GitHub"
+git push
 
 # Deactivate the environment at the end of the script (good practice)
 echo "Deactivating Conda environment: $CONDA_DEFAULT_ENV"

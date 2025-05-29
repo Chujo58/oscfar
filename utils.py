@@ -321,6 +321,8 @@ class NpzWriter(DataReader):
 
         for param in self.burst_parameters:
             if param in kwargs:
+                if type(kwargs[param]) == np.ndarray:
+                    kwargs[param] = kwargs[param].tolist()
                 if len(kwargs[param]) != number_of_components:
                     raise ValueError(
                         f"Unexpected length of {len(kwargs[param])} for parameter {param} when {number_of_components} expected."
