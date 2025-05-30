@@ -271,7 +271,7 @@ class NpzWriter(DataReader):
             final_start_percent = 0
 
         # Move the arrival time:
-        toa = np.array(self.burst_parameters["arrival_time"])
+        toa = np.array(self.burst_parameters["arrival_time"], dtype=float)
         toa -= (final_start_percent * len(self.times)) * self.res_time
         self.burst_parameters["arrival_time"] = toa.tolist()
 

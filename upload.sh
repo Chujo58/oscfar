@@ -42,9 +42,12 @@ else
 fi
 
 echo "Running commands in Conda environment: $CONDA_DEFAULT_ENV"
-# python reload.py $version
-# python -m build
-# twine upload dist/*
+python reload.py $version
+python -m build
+twine upload dist/*
+
+echo "Waiting for 3 seconds before staging..."
+sleep 3
 
 echo "Staging changes..."
 git add .
