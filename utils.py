@@ -2,7 +2,10 @@ from fitburst.backend.generic import DataReader
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import logging
+import logging, json
+
+from uncertainties import ufloat
+
 
 logger = logging.getLogger(__name__)
 # Configure logging
@@ -670,3 +673,93 @@ class WaterFallGrid:
             rowLoc="center",
             bbox=[0, 0, 1, 1],
         )
+
+
+class FitburstResultsReader:
+    """
+    Class to read and access results from a fitburst JSON output file.
+
+    Attributes:
+        filepath (str): Path to the fitburst JSON results file.
+        results (dict): Dictionary containing the loaded JSON data.
+        initial_dm (float): Initial DM used in the fit.
+        initial_time (float): Initial time used in the fit.
+        (various attributes): Attributes corresponding to keys in the
+                              'fit_statistics' section of the JSON,
+                              including best-fit parameters and their
+                              uncertainties as `uncertainties.ufloat` objects.
+    """
+
+    def __init__(self, filepath: str):
+        """
+        Initializes the FitburstResultsReader with the path to the JSON results file.
+
+        Args:
+            filepath (str): Path to the JSON file containing fitburst results.
+        """
+
+        self.filepath = filepath
+
+        with open(self.filepath, "r") as f:
+            self.results = json.load(f)
+
+        self.initial_dm = self.results["initial_dm"]
+        self.initial_time = self.results["initial_time"]
+
+        fit_statistics = self.results["fit_statistics"]
+
+        for key, data in fit_statistics.items():
+            if key in ["bestfit_parameters", "bestfit_uncertainties"]:
+                continue
+            setattr(self, key, data)
+
+        for param in fit_statistics["bestfit_parameters"]:
+            if len(fit_statistics["bestfit_parameters"][param]) == 1:
+                setattr(
+                    self,
+                    param,
+                    ufloat(
+                        fit_statistics["bestfit_parameters"][param][0],
+                        fit_statistics["bestfit_uncertainties"][param][0],
+                    ),
+                )
+
+            else:
+                ufloats = [
+                    ufloat(value, uncertainty)
+                    for value, uncertainty in zip(
+                        fit_statistics["bestfit_parameters"][param],
+                        fit_statistics["bestfit_uncertainties"][param],
+                    )
+                ]
+                setattr(self, param, ufloats)
+
+    def get_fit_statistics(self):
+        """
+        Returns the 'fit_statistics' section of the fitburst results.
+
+        Returns:
+            dict: A dictionary containing fit statistics.
+        """
+
+        return self.results["fit_statistics"]
+
+    def get_model_parameters(self):
+        """
+        Returns the 'model_parameters' section of the fitburst results.
+
+        Returns:
+            dict: A dictionary containing model parameters.
+        """
+
+        return self.results["model_parameters"]
+
+    def get_fit_logistics(self):
+        """
+        Returns the 'fit_logistics' section of the fitburst results.
+
+        Returns:
+            dict: A dictionary containing fit logistics.
+        """
+
+        return self.results["fit_logistics"]

@@ -348,3 +348,74 @@ Adds a table with additional information below the grid\.
 **Parameters:**
 
 -   **info** (`pd.DataFrame`): DataFrame containing the information to be displayed\.
+
+<a name="oscfar-utils-FitburstResultsReader"></a>
+### 🅲 oscfar\.utils\.FitburstResultsReader
+
+```python
+class FitburstResultsReader:
+```
+
+Class to read and access results from a fitburst JSON output file\.
+
+**Attributes:**
+
+- **filepath** (`str`): Path to the fitburst JSON results file\.
+- **results** (`dict`): Dictionary containing the loaded JSON data\.
+- **initial_dm** (`float`): Initial DM used in the fit\.
+- **initial_time** (`float`): Initial time used in the fit\.
+- **(various attributes)**: Attributes corresponding to keys in the
+'fit\_statistics' section of the JSON,
+including best-fit parameters and their
+uncertainties as \`uncertainties\.ufloat\` objects\.
+
+**Functions:**
+
+<a name="oscfar-utils-FitburstResultsReader-__init__"></a>
+#### 🅵 oscfar\.utils\.FitburstResultsReader\.\_\_init\_\_
+
+```python
+def __init__(self, filepath: str):
+```
+
+Initializes the FitburstResultsReader with the path to the JSON results file\.
+
+**Parameters:**
+
+- **filepath** (`str`): Path to the JSON file containing fitburst results\.
+<a name="oscfar-utils-FitburstResultsReader-get_fit_statistics"></a>
+#### 🅵 oscfar\.utils\.FitburstResultsReader\.get\_fit\_statistics
+
+```python
+def get_fit_statistics(self):
+```
+
+Returns the 'fit\_statistics' section of the fitburst results\.
+
+**Returns:**
+
+- `dict`: A dictionary containing fit statistics\.
+<a name="oscfar-utils-FitburstResultsReader-get_model_parameters"></a>
+#### 🅵 oscfar\.utils\.FitburstResultsReader\.get\_model\_parameters
+
+```python
+def get_model_parameters(self):
+```
+
+Returns the 'model\_parameters' section of the fitburst results\.
+
+**Returns:**
+
+- `dict`: A dictionary containing model parameters\.
+<a name="oscfar-utils-FitburstResultsReader-get_fit_logistics"></a>
+#### 🅵 oscfar\.utils\.FitburstResultsReader\.get\_fit\_logistics
+
+```python
+def get_fit_logistics(self):
+```
+
+Returns the 'fit\_logistics' section of the fitburst results\.
+
+**Returns:**
+
+- `dict`: A dictionary containing fit logistics\.
