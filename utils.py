@@ -72,10 +72,16 @@ class NpzWriter(DataReader):
         ref_freq (float): Reference frequency for spectral index calculations.
     """
 
-    dm_index = -2
-    scattering_index = -4
-    spectral_index = 0
-    ref_freq = 400
+    def_amplitude = 1
+    def_arrival_time = 0
+    def_burst_width = 0.0001
+    def_dm = 0
+    def_dm_index = -2
+    def_ref_freq = 400
+    def_scattering_index = -4
+    def_scattering_timescale = 0.0001
+    def_spectral_index = 0
+    def_spectral_running = 0
 
     def __init__(self, file_or_reader=None):
         """
@@ -98,16 +104,16 @@ class NpzWriter(DataReader):
             }
 
             self.burst_parameters = {
-                "amplitude": [1],
-                "arrival_time": [0],
-                "burst_width": [0.0001],
-                "dm": [0],
-                "dm_index": [self.dm_index],
-                "ref_freq": [self.ref_freq],
-                "scattering_index": [self.scattering_index],
-                "scattering_timescale": [0.0001],
-                "spectral_index": [self.spectral_index],
-                "spectral_running": [0],
+                "amplitude": [self.def_amplitude],
+                "arrival_time": [self.def_arrival_time],
+                "burst_width": [self.def_burst_width],
+                "dm": [self.def_dm],
+                "dm_index": [self.def_dm_index],
+                "ref_freq": [self.def_ref_freq],
+                "scattering_index": [self.def_scattering_index],
+                "scattering_timescale": [self.def_scattering_timescale],
+                "spectral_index": [self.def_spectral_index],
+                "spectral_running": [self.def_spectral_running],
             }
             logger.warning(f"Please use function .set_data to setup the data.")
         else:
@@ -337,9 +343,29 @@ class NpzWriter(DataReader):
                         self.burst_parameters[param]
                     ] * number_of_components
                 else:
-                    self.burst_parameters[param] += [
-                        self.burst_parameters[param][-1]
-                    ] * (number_of_components - len(self.burst_parameters[param]))
+                    if len(self.burst_parameters[param]) != number_of_components:
+                        temp = set(self.burst_parameters[param])
+                        if len(temp) == 1:  # One parameter repeated
+                            self.burst_parameters[param] = [
+                                self.burst_parameters[param][-1]
+                            ] * number_of_components
+
+                        if (
+                            len(temp) > number_of_components
+                        ):  # More parameters than components -> clip results
+                            self.burst_parameters[param] = self.burst_parameters[param][
+                                :number_of_components
+                            ]
+
+                        if len(temp) < number_of_components:
+                            logger.warning(
+                                f"Using default value {getattr(self, f'def_{param}',0)} for parameter {param} to increase to {number_of_components} components."
+                            )
+                            self.burst_parameters[param] += [
+                                getattr(self, f"def_{param}")
+                            ] * (
+                                number_of_components - len(self.burst_parameters[param])
+                            )
 
     def save(self, new_filepath: str):
         """

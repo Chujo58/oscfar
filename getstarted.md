@@ -21,7 +21,7 @@ To get started with the OSCFAR implementation, you'll need to set up your enviro
 {: .no_toc }
 
 ```bash
-conda create -n myenv python=3.9  # Or your preferred Python version above 3.9
+conda create -n myenv python=3.8  # Or your preferred Python version above 3.8
 conda activate myenv
 ```
 
