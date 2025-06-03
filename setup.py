@@ -1,4 +1,4 @@
-__version__ = "1.1.10"
+__version__ = "1.1.11"
 
 from setuptools import setup
 
@@ -24,6 +24,7 @@ setup(
         "pandas",
         "scikit-learn",
         "statsmodels",
+        "uncertainties",
     ],
     python_requires=">=3.8",
     include_package_data=True,
