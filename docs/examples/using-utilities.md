@@ -18,8 +18,8 @@ filepath = ... #Path to the .npz file
 down = ... #Downsampling factor of the .npz file
 reader = ocf.reader(filepath, down)
 
-ax = ocf.waterfall_axes(reader, 0.6, 0.6, 0.1, title="Title", readjust_title=0.1)
-ax.plot()
+ax = ocf.waterfall_axes()
+ax.plot(reader, title="Title", readjust_title=0.1)
 # If you have a ocf.peaks object:
 ax.plot_time_peaks(peaks, 'red', show_thres=False)
 ```

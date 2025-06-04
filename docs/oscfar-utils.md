@@ -10,14 +10,46 @@ nav_order: 6
 ## 🅼 oscfar\.utils
 {: .no_toc }
 
-### Classes
-{: .no_toc .text-delta }
-
 1. TOC
 {:toc}
 
-<a name="oscfar-utils-NpzReader"></a>
+### Functions
+{: .text-delta}
 
+<a name="oscfar-utils-plot_colormaps"></a>
+### 🅵 oscfar\.utils\.plot\_colormaps
+
+```python
+def plot_colormaps(gradient, cmap_category, category_name):
+```
+
+Plots a list of colormaps\.
+<a name="oscfar-utils-get_colormaps"></a>
+### 🅵 oscfar\.utils\.get\_colormaps
+
+```python
+def get_colormaps():
+```
+
+Retrieves and categorizes available matplotlib colormaps, then plots them
+
+by category for visual inspection\.
+
+This function fetches all registered colormaps in matplotlib, categorizes
+them based on common usage \(perceptually uniform, sequential, diverging,
+qualitative, miscellaneous\), and then uses \`plot\_colormaps\` to display
+each category in separate figure windows\.
+
+**Returns:**
+
+- `list[str]`: A sorted list of all available colormap names\.
+
+
+### Classes
+{: .text-delta }
+
+
+<a name="oscfar-utils-NpzReader"></a>
 ### 🅲 oscfar\.utils\.NpzReader
 
 ```python
@@ -30,13 +62,12 @@ Inherits from fitburst\.backend\.generic\.DataReader\.
 
 **Attributes:**
 
--   **metadata** (`dict`): Metadata associated with the data\.
--   **downsampling_factor** (`int`): Factor by which the data has been downsampled\.
+- **metadata** (`dict`): Metadata associated with the data\.
+- **downsampling_factor** (`int`): Factor by which the data has been downsampled\.
 
 **Functions:**
 
 <a name="oscfar-utils-NpzReader-__init__"></a>
-
 #### 🅵 oscfar\.utils\.NpzReader\.\_\_init\_\_
 
 ```python
@@ -47,10 +78,9 @@ Initializes the NpzReader with the given file and downsampling factor\.
 
 **Parameters:**
 
--   **fname** (`str`): Path to the \.npz file\.
--   **factor** (`int`): Downsampling factor applied to the data\.
-    <a name="oscfar-utils-NpzReader-__repr__"></a>
-
+- **fname** (`str`): Path to the \.npz file\.
+- **factor** (`int`): Downsampling factor applied to the data\.
+<a name="oscfar-utils-NpzReader-__repr__"></a>
 #### 🅵 oscfar\.utils\.NpzReader\.\_\_repr\_\_
 
 ```python
@@ -59,7 +89,6 @@ def __repr__(self):
 
 Returns a string representation of the NpzReader object\.
 <a name="oscfar-utils-NpzReader-__str__"></a>
-
 #### 🅵 oscfar\.utils\.NpzReader\.\_\_str\_\_
 
 ```python
@@ -68,7 +97,7 @@ def __str__(self):
 
 Returns a string representation of the NpzReader object\.
 <a name="oscfar-utils-NpzWriter"></a>
-### 🅲 oscfar\.utils\.NpzWrite
+### 🅲 oscfar\.utils\.NpzWriter
 
 ```python
 class NpzWriter(DataReader):
@@ -94,7 +123,7 @@ dispersion measure, scattering timescale, etc\.
 #### 🅵 oscfar\.utils\.NpzWriter\.\_\_init\_\_
 
 ```python
-def __init__(self, file_or_reader=None):
+def __init__(self, file_or_reader = None):
 ```
 
 Initializes the NpzWriter with the given \.npz file\.
@@ -102,7 +131,6 @@ Initializes the NpzWriter with the given \.npz file\.
 **Parameters:**
 
 - **file_or_reader** (`str or NpzReader`): Path to the \.npz file or NpzReader made for file
-
 <a name="oscfar-utils-NpzWriter-set_data"></a>
 #### 🅵 oscfar\.utils\.NpzWriter\.set\_data
 
@@ -119,27 +147,38 @@ Sets the data and metadata for a new \.npz file\.
 - **freqs** (`np.ndarray`): Array of frequency values for each channel\.
 - **time_res** (`float`): Time resolution of the data\.
 - **freq_res** (`float`): Frequency resolution of the data\.
-- **bad_chans** (`list`): List of indices of bad frequency channels\. Defaults to \[\]\.
-
+- **bad_chans** (`list`): List of indices of bad frequency channels\.
+Defaults to \[\]\.
 <a name="oscfar-utils-NpzWriter-remove_baseline"></a>
 #### 🅵 oscfar\.utils\.NpzWriter\.remove\_baseline
 
 ```python
-def remove_baseline(self, percent, step = 0.05, verbose = False, cutoff=0.3):
+def remove_baseline(self, percent, step = 0.05, verbose = False, cutoff = 0.3):
 ```
 
-Removes baseline from the start and end of the data based on SNR.
+Removes baseline from the start and end of the data based on SNR\.
 
-Iteratively reduces the percentage of data considered from the start and end until the SNR in those regions falls below a cutoff threshold. The arrival time parameter in burst_parameters is adjusted accordingly.
+Iteratively reduces the percentage of data considered from the start
+and end until the SNR in those regions falls below a cutoff threshold\.
+The arrival time parameter in burst\_parameters is adjusted accordingly\.
 
 **Parameters:**
 
-- **percent** (`float`): Initial percentage of data to consider as baseline
-from each end\.
-- **step** (`float`) (default: `0.05`): Step size for reducing the percentage\. Defaults to 0\.05\.
-- **verbose** (`bool`): If True, prints SNR and percentage information
-during the process\. Defaults to False\.
-- **cutoff** (`float`): The SNR threshold below which a region is considered baseline and removed\.Defaults to 0.3\.
+- **percent** (`float`): Initial percentage of data from the start and end
+to consider for baseline removal \(between 0 and 1\)\.
+- **step** (`float`): The step size by which the percentage is
+reduced in each iteration\. Defaults to 0\.05\.
+- **verbose** (`bool`): If True, prints intermediate SNR values
+and percentages during the process\.
+Defaults to False\.
+- **cutoff** (`float`): The SNR threshold below which a region
+is considered baseline and removed\.
+Defaults to 0\.3\.
+
+**Raises:**
+
+- **RuntimeError**: If the NpzWriter is set to create a new file but
+data has not been loaded using \.set\_data\(\)\.
 <a name="oscfar-utils-NpzWriter-update_burst_parameters"></a>
 #### 🅵 oscfar\.utils\.NpzWriter\.update\_burst\_parameters
 
@@ -172,7 +211,6 @@ Saves the processed data and burst parameters to a new \.npz file\.
 
 - **new_filepath** (`str`): Path to the new \.npz file where the data
 will be saved\.
-
 <a name="oscfar-utils-Peaks"></a>
 ### 🅲 oscfar\.utils\.Peaks
 
@@ -184,8 +222,8 @@ Class to hold results from OS-CFAR\.
 
 **Attributes:**
 
--   **peaks** (`np.array`): First half of the OS-CFAR results containing the peaks resulting from the algorithm\.
--   **threshold** (`np.array`): Second half of the OS-CFAR results containing the threshold used by the algorithm\.
+- **peaks** (`np.array`): First half of the OS-CFAR results containing the peaks resulting from the algorithm\.
+- **threshold** (`np.array`): Second half of the OS-CFAR results containing the threshold used by the algorithm\.
 
 **Functions:**
 
@@ -200,70 +238,139 @@ Initializes the Peaks object with the result from OS-CFAR\.
 
 **Parameters:**
 
--   **oscfar_result** (`tuple`): A tuple containing the detected peak indices
-    and the threshold array\.
-    
+- **oscfar_result** (`tuple`): A tuple containing the detected peak indices
+and the threshold array\.
+<a name="oscfar-utils-WaterFallImage"></a>
+### 🅲 oscfar\.utils\.WaterFallImage
+
+```python
+class WaterFallImage:
+```
+
+Base class for creating matplotlib figures and axes for waterfall plots\.
+
+Provides basic functionality for changing figure size, showing, and saving plots\.
+Intended to be inherited by classes that create specific plot layouts\.
+
+**Attributes:**
+
+- **cmap** (`str`): The default colormap to use for the spectrogram image\.
+Defaults to 'gist\_yarg'\.
+
+**Functions:**
+
+<a name="oscfar-utils-WaterFallImage-__init__"></a>
+#### 🅵 oscfar\.utils\.WaterFallImage\.\_\_init\_\_
+
+```python
+def __init__(self):
+```
+<a name="oscfar-utils-WaterFallImage-change_size"></a>
+#### 🅵 oscfar\.utils\.WaterFallImage\.change\_size
+
+```python
+def change_size(self, width, height):
+```
+
+Changes the size of the figure containing the axes\.
+
+**Parameters:**
+
+- **width** (`float`): The new width of the figure in inches\.
+- **height** (`float`): The new height of the figure in inches\.
+<a name="oscfar-utils-WaterFallImage-show"></a>
+#### 🅵 oscfar\.utils\.WaterFallImage\.show
+
+```python
+def show(self, block = None):
+```
+
+Displays the plot\.
+
+**Parameters:**
+
+- **block** (`bool`): Whether to block the execution until the
+plot window is closed\. Defaults to None,
+which uses the matplotlib default\.
+<a name="oscfar-utils-WaterFallImage-save"></a>
+#### 🅵 oscfar\.utils\.WaterFallImage\.save
+
+```python
+def save(self, fname):
+```
+
+Saves the current plot to a file\.
+
+**Parameters:**
+
+- **fname** (`str`): The filename \(including path and extension\) to save the plot to\.
 <a name="oscfar-utils-WaterFallAxes"></a>
 ### 🅲 oscfar\.utils\.WaterFallAxes
 
 ```python
-class WaterFallAxes:
+class WaterFallAxes(WaterFallImage):
 ```
 
-Class to create axes for waterfall plots \(spectrograms\)\.
+Class to create matplotlib axes for a single waterfall plot, including
+
+optional time series and spectrum plots\.
+
+Inherits from WaterFallImage\.
 
 **Attributes:**
 
--   **\_data** (`DataReader`): DataReader object containing the spectrogram data\.
--   **show_ts** (`bool`): Whether to show the time series plot\.
--   **show_spec** (`bool`): Whether to show the spectrum plot\.
--   **im** (`matplotlib.axes._subplots.AxesSubplot`): Axes for the spectrogram\.
--   **ts** (`matplotlib.axes._subplots.AxesSubplot`): Axes for the time series plot\.
--   **spec** (`matplotlib.axes._subplots.AxesSubplot`): Axes for the spectrum plot\.
--   **time_series** (`np.ndarray`): Time series data \(sum over frequencies\)\.
--   **freq_series** (`np.ndarray`): Frequency series data \(sum over time\)\.
+- **im** (`matplotlib.axes.Axes`): Axes object for the main spectrogram image\.
+- **ts** (`matplotlib.axes.Axes or None`): Axes object for the time series plot,
+or None if show\_ts is False\.
+- **spec** (`matplotlib.axes.Axes or None`): Axes object for the spectrum plot,
+or None if show\_spec is False\.
+- **show_ts** (`bool`): Whether the time series plot is included\.
+- **show_spec** (`bool`): Whether the spectrum plot is included\.
+- **_data** (`NpzReader or None`): Stores the data reader object after plotting\.
+- **_time_series** (`np.ndarray or None`): Stores the summed time series after plotting\.
+- **_freq_series** (`np.ndarray or None`): Stores the summed frequency series after plotting\.
 
 **Functions:**
 
 <a name="oscfar-utils-WaterFallAxes-__init__"></a>
-
 #### 🅵 oscfar\.utils\.WaterFallAxes\.\_\_init\_\_
 
 ```python
-def __init__(self, data: DataReader, width: float, height: float, bottom: float, left: float = None, hratio: float = 1, vratio: float = 1, show_ts = True, show_spec = True, labels_on = [True, True], title = '', readjust_title = 0):
+def __init__(self, width: float = 0.75, height: float = 0.75, bottom: float = 0.1, left: float = None, hratio: float = 1, vratio: float = 1, show_ts = True, show_spec = True, labels_on = [True, True]):
 ```
 
 Initializes the WaterFallAxes object\.
 
 **Parameters:**
 
--   **data** (`DataReader`): DataReader object containing the spectrogram data\.
--   **width** (`float`): Width of the main spectrogram plot\.
--   **height** (`float`): Height of the main spectrogram plot\.
--   **bottom** (`float`): Bottom position of the main spectrogram plot\.
--   **left** (`float`): Left position of the main spectrogram plot\.
-    Defaults to the value of 'bottom'\.
--   **hratio** (`float`) (default: `1`): Horizontal ratio for plot dimensions\. Defaults to 1\.
--   **vratio** (`float`) (default: `1`): Vertical ratio for plot dimensions\. Defaults to 1\.
--   **show_ts** (`bool`) (default: `True`): Whether to show the time series plot\. Defaults to True\.
--   **show_spec** (`bool`) (default: `True`): Whether to show the spectrum plot\. Defaults to True\.
--   **labels_on** (`list`): List of two booleans indicating whether to
-    show labels on the x and y axes, respectively\.
-    Defaults to \[True, True\]\.
--   **title** (`str`) (default: `""`): Title of the plot\. Defaults to ""\.
--   **readjust_title** (`int`) (default: `0`): Vertical adjustment for the title position\. Defaults to 0\.
-    <a name="oscfar-utils-WaterFallAxes-plot"></a>
-
+- **width** (`float`) (default: `0.75`): Width of the main spectrogram plot\. Defaults to 0\.75\.
+- **height** (`float`) (default: `0.75`): Height of the main spectrogram plot\. Defaults to 0\.75\.
+- **bottom** (`float`): Bottom position of the main spectrogram plot\.
+- **left** (`float`): Left position of the main spectrogram plot\.
+Defaults to the value of 'bottom'\.
+- **hratio** (`float`) (default: `1`): Horizontal ratio for plot dimensions\. Defaults to 1\.
+- **vratio** (`float`) (default: `1`): Vertical ratio for plot dimensions\. Defaults to 1\.
+- **show_ts** (`bool`) (default: `True`): Whether to show the time series plot\. Defaults to True\.
+- **show_spec** (`bool`) (default: `True`): Whether to show the spectrum plot\. Defaults to True\.
+- **labels_on** (`list`): List of two booleans indicating whether to
+show labels on the x and y axes, respectively\.
+Defaults to \[True, True\]\.
+<a name="oscfar-utils-WaterFallAxes-plot"></a>
 #### 🅵 oscfar\.utils\.WaterFallAxes\.plot
 
 ```python
-def plot(self):
+def plot(self, data: NpzReader, title = '', readjust_title = 0):
 ```
 
-Plots the spectrogram\.
-<a name="oscfar-utils-WaterFallAxes-plot_time_peaks"></a>
+Plots the spectrogram, time series, and spectrum on the created axes\.
 
-#### 🅵 oscfar\.utils\.WaterFallAxes\.plot_time_peaks
+**Parameters:**
+
+- **data** (`NpzReader`): DataReader object containing the spectrogram data\.
+- **title** (`str`) (default: `""`): Title of the plot\. Defaults to ""\.
+- **readjust_title** (`int`) (default: `0`): Vertical adjustment for the title position\. Defaults to 0\.
+<a name="oscfar-utils-WaterFallAxes-plot_time_peaks"></a>
+#### 🅵 oscfar\.utils\.WaterFallAxes\.plot\_time\_peaks
 
 ```python
 def plot_time_peaks(self, peaks: Peaks, color, show_thres = False):
@@ -275,31 +382,32 @@ Also plots the peaks on the time series plot if it is shown\.
 
 **Parameters:**
 
--   **peaks** (`Peaks`): An object containing the peak indices and threshold\.
--   **color** (`str`): Color for the vertical lines and scatter points\.
--   **show_thres** (`bool`): Whether to show the threshold on the time series plot\.
-    <a name="oscfar-utils-WaterFallGrid"></a>
-
+- **peaks** (`Peaks`): An object containing the peak indices and threshold\.
+- **color** (`str`): Color for the vertical lines and scatter points\.
+- **show_thres** (`bool`): Whether to show the threshold on the time series plot\.
+<a name="oscfar-utils-WaterFallGrid"></a>
 ### 🅲 oscfar\.utils\.WaterFallGrid
 
 ```python
-class WaterFallGrid:
+class WaterFallGrid(WaterFallImage):
 ```
 
-Class to create a grid of waterfall plots \(spectrograms\)\.
+Class to create a grid of waterfall plots \(spectrograms\) with associated time series and spectra\.
+
+Inherits from WaterFallImage\.
 
 **Attributes:**
 
--   **nrows** (`int`): Number of rows in the grid\.
--   **ncols** (`int`): Number of columns in the grid\.
--   **axes** (`np.ndarray`): 2D array of WaterFallAxes objects representing the grid\.
--   **vs** (`float`): Vertical spacing between plots\.
--   **hs** (`float`): Horizontal spacing between plots\.
+- **nrows** (`int`): Number of rows in the grid\.
+- **ncols** (`int`): Number of columns in the grid\.
+- **axes** (`np.ndarray`): A 2D array of WaterFallAxes objects, representing
+each subplot in the grid\.
+- **vs** (`float`): Vertical spacing between plots\.
+- **hs** (`float`): Horizontal spacing between plots\.
 
 **Functions:**
 
 <a name="oscfar-utils-WaterFallGrid-__init__"></a>
-
 #### 🅵 oscfar\.utils\.WaterFallGrid\.\_\_init\_\_
 
 ```python
@@ -310,12 +418,11 @@ Initializes the WaterFallGrid object\.
 
 **Parameters:**
 
--   **nrows** (`int`): Number of rows in the grid\.
--   **ncols** (`int`): Number of columns in the grid\.
--   **vspacing** (`float`) (default: `0.1`): Vertical spacing between plots\. Defaults to 0\.1\.
--   **hspacing** (`float`) (default: `0.1`): Horizontal spacing between plots\. Defaults to 0\.1\.
-    <a name="oscfar-utils-WaterFallGrid-plot"></a>
-
+- **nrows** (`int`): Number of rows in the grid\.
+- **ncols** (`int`): Number of columns in the grid\.
+- **vspacing** (`float`) (default: `0.1`): Vertical spacing between plots\. Defaults to 0\.1\.
+- **hspacing** (`float`) (default: `0.1`): Horizontal spacing between plots\. Defaults to 0\.1\.
+<a name="oscfar-utils-WaterFallGrid-plot"></a>
 #### 🅵 oscfar\.utils\.WaterFallGrid\.plot
 
 ```python
@@ -326,18 +433,17 @@ Plots the waterfall grid with the provided data, peaks, and titles\.
 
 **Parameters:**
 
--   **data** (`list`): List of DataReader objects, one for each subplot\.
--   **peaks** (`list`): List of Peaks objects, one for each subplot\.
--   **titles** (`list`): List of titles for each subplot\.
--   **color** (`str`): Color for the peak markers\.
--   **labels** (`list`): List of two booleans indicating whether to
-    show labels on the x and y axes, respectively\.
-    Defaults to \[True, False\]\.
--   **adjust_t** (`int`) (default: `0`): Vertical adjustment for the title position\. Defaults to 0\.
--   **show_thres** (`bool`): Whether to show the threshold on the time series plot\.
-    <a name="oscfar-utils-WaterFallGrid-add_info"></a>
-
-#### 🅵 oscfar\.utils\.WaterFallGrid\.add_info
+- **data** (`list`): List of DataReader objects, one for each subplot\.
+- **peaks** (`list`): List of Peaks objects, one for each subplot\.
+- **titles** (`list`): List of titles for each subplot\.
+- **color** (`str`): Color for the peak markers\.
+- **labels** (`list`): List of two booleans indicating whether to
+show labels on the x and y axes, respectively\.
+Defaults to \[True, False\]\.
+- **adjust_t** (`int`) (default: `0`): Vertical adjustment for the title position\. Defaults to 0\.
+- **show_thres** (`bool`): Whether to show the threshold on the time series plot\.
+<a name="oscfar-utils-WaterFallGrid-add_info"></a>
+#### 🅵 oscfar\.utils\.WaterFallGrid\.add\_info
 
 ```python
 def add_info(self, info: pd.DataFrame):
@@ -347,8 +453,7 @@ Adds a table with additional information below the grid\.
 
 **Parameters:**
 
--   **info** (`pd.DataFrame`): DataFrame containing the information to be displayed\.
-
+- **info** (`pd.DataFrame`): DataFrame containing the information to be displayed\.
 <a name="oscfar-utils-FitburstResultsReader"></a>
 ### 🅲 oscfar\.utils\.FitburstResultsReader
 

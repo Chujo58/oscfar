@@ -2,6 +2,7 @@ from fitburst.backend.generic import DataReader
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import logging, json
 
 from uncertainties import ufloat
@@ -12,6 +13,213 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
+
+
+def plot_colormaps(gradient, cmap_category, category_name):
+    """
+    Plots a list of colormaps.
+    """
+    if not cmap_category:
+        print(f"No colormaps in category: {category_name}")
+        return
+
+    # Calculate rows and columns for subplot grid
+    n_colormaps = len(cmap_category)
+    n_cols = 3  # You can adjust this for more/fewer columns
+    n_rows = int(np.ceil(n_colormaps / n_cols))
+
+    fig, axes = plt.subplots(
+        n_rows,
+        n_cols,
+        figsize=(n_cols * 3.5, n_rows * 0.8),
+        layout="constrained",
+        squeeze=False,
+    )
+    fig.suptitle(f"Matplotlib Colormaps: {category_name}", fontsize=16, y=1.02)
+
+    for i, cmap_name in enumerate(cmap_category):
+        row = i // n_cols
+        col = i % n_cols
+        ax = axes[row, col]
+
+        # Use the colormap
+        try:
+            cmap = mpl.colormaps[cmap_name]
+            ax.imshow(gradient, aspect="auto", cmap=cmap)
+        except KeyError:
+            print(f"Cannot plot cmap: {cmap_name}")
+            # continue
+
+        ax.text(
+            0.01,
+            0.5,
+            cmap_name,
+            va="center",
+            ha="left",
+            fontsize=10,
+            color="white",
+            transform=ax.transAxes,
+            bbox=dict(
+                facecolor="black", alpha=0.5, edgecolor="none", boxstyle="round,pad=0.2"
+            ),
+        )
+
+        ax.set_axis_off()
+
+    # Hide any unused subplots
+    for i in range(n_colormaps, n_rows * n_cols):
+        row = i // n_cols
+        col = i % n_cols
+        axes[row, col].set_visible(False)
+
+    plt.show()
+
+
+def get_colormaps():
+    """
+    Retrieves and categorizes available matplotlib colormaps, then plots them
+    by category for visual inspection.
+
+    This function fetches all registered colormaps in matplotlib, categorizes
+    them based on common usage (perceptually uniform, sequential, diverging,
+    qualitative, miscellaneous), and then uses `plot_colormaps` to display
+    each category in separate figure windows.
+
+    Returns:
+        list[str]: A sorted list of all available colormap names.
+    """
+    # Create a simple gradient to display the colormaps
+
+    gradient = np.linspace(0, 1, 256)
+    gradient = np.vstack((gradient, gradient))
+
+    # Get all available colormaps
+    all_cmaps = sorted(mpl.colormaps)
+
+    # Categorize colormaps (as per Matplotlib documentation)
+    perceptually_uniform_cmaps = [
+        "viridis",
+        "plasma",
+        "inferno",
+        "magma",
+        "cividis",
+        "rocket",
+        "mako",
+        "turbo",
+    ]
+    sequential_cmaps = [
+        cm
+        for cm in all_cmaps
+        if cm.startswith(
+            (
+                "Blues",
+                "BuGn",
+                "BuPu",
+                "GnBu",
+                "Greens",
+                "Greys",
+                "Oranges",
+                "OrRd",
+                "PuBu",
+                "PuBuGn",
+                "PuRd",
+                "Purples",
+                "RdPu",
+                "Reds",
+                "YlGn",
+                "YlGnBu",
+                "YlOrBr",
+                "YlOrRd",
+            )
+        )
+        and cm not in perceptually_uniform_cmaps
+    ]
+    sequential_2_cmaps = [
+        "autumn",
+        "bone",
+        "cool",
+        "copper",
+        "cubehelix",
+        "flag",
+        "gist_earth",
+        "gist_gray",
+        "gist_heat",
+        "gist_ncar",
+        "gist_rainbow",
+        "gist_stern",
+        "gray",
+        "hot",
+        "hsv",
+        "jet",
+        "nipy_spectral",
+        "ocean",
+        "pink",
+        "rainbow",
+        "spectral",
+        "spring",
+        "summer",
+        "winter",
+    ]
+    diverging_cmaps = [
+        "BrBG",
+        "bwr",
+        "coolwarm",
+        "RdBu",
+        "RdGy",
+        "PuOr",
+        "PRGn",
+        "PiYG",
+        "RdYlBu",
+        "RdYlGn",
+        "seismic",
+        "twilight",
+        "twilight_shifted",
+    ]
+    qualitative_cmaps = [
+        "Accent",
+        "Dark2",
+        "Paired",
+        "Pastel1",
+        "Pastel2",
+        "Set1",
+        "Set2",
+        "Set3",
+        "tab10",
+        "tab20",
+        "tab20b",
+        "tab20c",
+    ]
+    miscellaneous_cmaps = [
+        cm
+        for cm in all_cmaps
+        if cm
+        not in (
+            perceptually_uniform_cmaps
+            + sequential_cmaps
+            + sequential_2_cmaps
+            + diverging_cmaps
+            + qualitative_cmaps
+        )
+    ]
+
+    # Sort the lists to ensure consistent order
+    perceptually_uniform_cmaps.sort()
+    sequential_cmaps.sort()
+    sequential_2_cmaps.sort()
+    diverging_cmaps.sort()
+    qualitative_cmaps.sort()
+    miscellaneous_cmaps.sort()
+
+    # Plot each category
+    plot_colormaps(gradient, perceptually_uniform_cmaps, "Perceptually Uniform")
+    plot_colormaps(gradient, sequential_cmaps, "Sequential (Part 1 - ColorBrewer)")
+    plot_colormaps(gradient, sequential_2_cmaps, "Sequential (Part 2 - Other)")
+    plot_colormaps(gradient, diverging_cmaps, "Diverging")
+    plot_colormaps(gradient, qualitative_cmaps, "Qualitative")
+    plot_colormaps(gradient, miscellaneous_cmaps, "Miscellaneous/Legacy")
+
+    print("\nColormaps are displayed in separate windows based on their category.")
+    return all_cmaps
 
 
 class NpzReader(DataReader):
@@ -415,45 +623,96 @@ class Peaks:
         self.threshold = np.array(oscfar_result[1])
 
 
-class WaterFallAxes:
+class WaterFallImage:
     """
-    Class to create axes for waterfall plots (spectrograms).
+    Base class for creating matplotlib figures and axes for waterfall plots.
+
+    Provides basic functionality for changing figure size, showing, and saving plots.
+    Intended to be inherited by classes that create specific plot layouts.
 
     Attributes:
-        _data (DataReader): DataReader object containing the spectrogram data.
-        show_ts (bool): Whether to show the time series plot.
-        show_spec (bool): Whether to show the spectrum plot.
-        im (matplotlib.axes._subplots.AxesSubplot): Axes for the spectrogram.
-        ts (matplotlib.axes._subplots.AxesSubplot): Axes for the time series plot.
-        spec (matplotlib.axes._subplots.AxesSubplot): Axes for the spectrum plot.
-        time_series (np.ndarray): Time series data (sum over frequencies).
-        freq_series (np.ndarray): Frequency series data (sum over time).
+        cmap (str): The default colormap to use for the spectrogram image.
+                    Defaults to 'gist_yarg'.
     """
 
     cmap = "gist_yarg"
 
+    def __init__(self):
+        pass
+
+    def change_size(self, width, height):
+        """
+        Changes the size of the figure containing the axes.
+
+        Args:
+            width (float): The new width of the figure in inches.
+            height (float): The new height of the figure in inches.
+        """
+
+        plt.gcf().set_size_inches(width, height)
+
+    def show(self, block=None):
+        """
+        Displays the plot.
+
+        Args:
+            block (bool, optional): Whether to block the execution until the
+                                    plot window is closed. Defaults to None,
+                                    which uses the matplotlib default.
+        """
+
+        plt.show(block)
+
+    def save(self, fname):
+        """
+        Saves the current plot to a file.
+
+        Args:
+            fname (str): The filename (including path and extension) to save the plot to.
+        """
+
+        plt.savefig(fname)
+        print("Image saved successfully.")
+
+
+class WaterFallAxes(WaterFallImage):
+    """
+    Class to create matplotlib axes for a single waterfall plot, including
+    optional time series and spectrum plots.
+
+    Inherits from WaterFallImage.
+
+    Attributes:
+        im (matplotlib.axes.Axes): Axes object for the main spectrogram image.
+        ts (matplotlib.axes.Axes or None): Axes object for the time series plot,
+                                           or None if show_ts is False.
+        spec (matplotlib.axes.Axes or None): Axes object for the spectrum plot,
+                                            or None if show_spec is False.
+        show_ts (bool): Whether the time series plot is included.
+        show_spec (bool): Whether the spectrum plot is included.
+        _data (NpzReader or None): Stores the data reader object after plotting.
+        _time_series (np.ndarray or None): Stores the summed time series after plotting.
+        _freq_series (np.ndarray or None): Stores the summed frequency series after plotting.
+    """
+
     def __init__(
         self,
-        data: DataReader,
-        width: float,
-        height: float,
-        bottom: float,
+        width: float = 0.75,
+        height: float = 0.75,
+        bottom: float = 0.1,
         left: float = None,
         hratio: float = 1,
         vratio: float = 1,
         show_ts=True,
         show_spec=True,
         labels_on=[True, True],
-        title="",
-        readjust_title=0,
     ):
         """
         Initializes the WaterFallAxes object.
 
         Args:
-            data (DataReader): DataReader object containing the spectrogram data.
-            width (float): Width of the main spectrogram plot.
-            height (float): Height of the main spectrogram plot.
+            width (float): Width of the main spectrogram plot. Defaults to 0.75.
+            height (float): Height of the main spectrogram plot. Defaults to 0.75.
             bottom (float): Bottom position of the main spectrogram plot.
             left (float, optional): Left position of the main spectrogram plot.
                                     Defaults to the value of 'bottom'.
@@ -464,11 +723,9 @@ class WaterFallAxes:
             labels_on (list, optional): List of two booleans indicating whether to
                                         show labels on the x and y axes, respectively.
                                         Defaults to [True, True].
-            title (str, optional): Title of the plot. Defaults to "".
-            readjust_title (int, optional): Vertical adjustment for the title position. Defaults to 0.
         """
+        super().__init__()
 
-        self._data = data
         self.show_ts = show_ts
         self.show_spec = show_spec
 
@@ -486,14 +743,7 @@ class WaterFallAxes:
         self.im = plt.axes((left, bot, im_w, im_h))
         if self.show_ts:
             self.ts = plt.axes((left, im_h + bot, im_w, 0.2 / vratio), sharex=self.im)
-            plt.text(
-                1,  # - len(title) * 0.025,
-                0.85 - readjust_title,
-                title,
-                transform=self.ts.transAxes,
-                ha="right",
-                va="bottom",
-            )
+
         if self.show_spec:
             self.spec = plt.axes((im_w + left, bot, 0.2 / hratio, im_h), sharey=self.im)
 
@@ -519,29 +769,45 @@ class WaterFallAxes:
             plt.setp(self.spec.get_yticklabels(), visible=False)
             plt.setp(self.spec.get_yticklines(), visible=False)
 
-        self.time_series = np.sum(self._data.data_full, 0)
-        self.freq_series = np.sum(self._data.data_full, 1)
+    def plot(self, data: NpzReader, title="", readjust_title=0):
+        """
+        Plots the spectrogram, time series, and spectrum on the created axes.
 
-    def plot(self):
+        Args:
+            data (NpzReader): DataReader object containing the spectrogram data.
+            title (str, optional): Title of the plot. Defaults to "".
+            readjust_title (int, optional): Vertical adjustment for the title position. Defaults to 0.
         """
-        Plots the spectrogram.
-        """
+        self._data = data  # Store data for later use (e.g., in plot_time_peaks)
+
+        self._time_series = np.sum(data.data_full, 0)
+        self._freq_series = np.sum(data.data_full, 1)
+
         self.im.imshow(
-            self._data.data_full,
+            data.data_full,
             cmap=self.cmap,
             aspect="auto",
             origin="lower",
             extent=[
-                self._data.times[0],
-                self._data.times[-1],
-                self._data.freqs[0],
-                self._data.freqs[-1],
+                data.times[0],
+                data.times[-1],
+                data.freqs[0],
+                data.freqs[-1],
             ],
         )
         if self.show_ts:
-            self.ts.plot(self._data.times, self.time_series)
+            self.ts.plot(data.times, self._time_series)
+            plt.text(
+                1,  # - len(title) * 0.025,
+                0.85 - readjust_title,
+                title,
+                transform=self.ts.transAxes,
+                ha="right",
+                va="bottom",
+            )
+
         if self.show_spec:
-            self.spec.plot(self.freq_series, self._data.freqs)
+            self.spec.plot(self._freq_series, data.freqs)
 
     def plot_time_peaks(self, peaks: Peaks, color, show_thres=False):
         """
@@ -553,6 +819,11 @@ class WaterFallAxes:
             color (str): Color for the vertical lines and scatter points.
             show_thres (bool): Whether to show the threshold on the time series plot.
         """
+        if getattr(self, "_data", None) is None:
+            raise Exception(
+                "Cannot plot the time series' peaks without the data. Please use '.plot(data) first."
+            )
+
         if peaks is None:
             return
 
@@ -566,7 +837,7 @@ class WaterFallAxes:
         if self.show_ts:
             self.ts.scatter(
                 self._data.times[peaks.peaks],
-                self.time_series[peaks.peaks],
+                self._time_series[peaks.peaks],
                 marker="o",
                 color=color,
                 zorder=10,
@@ -576,14 +847,17 @@ class WaterFallAxes:
             self.ts.plot(self._data.times, peaks.threshold, c="grey", linestyle="--")
 
 
-class WaterFallGrid:
+class WaterFallGrid(WaterFallImage):
     """
-    Class to create a grid of waterfall plots (spectrograms).
+    Class to create a grid of waterfall plots (spectrograms) with associated time series and spectra.
+
+    Inherits from WaterFallImage.
 
     Attributes:
         nrows (int): Number of rows in the grid.
         ncols (int): Number of columns in the grid.
-        axes (np.ndarray): 2D array of WaterFallAxes objects representing the grid.
+        axes (np.ndarray): A 2D array of WaterFallAxes objects, representing
+                           each subplot in the grid.
         vs (float): Vertical spacing between plots.
         hs (float): Horizontal spacing between plots.
     """
@@ -599,7 +873,8 @@ class WaterFallGrid:
             hspacing (float, optional): Horizontal spacing between plots. Defaults to 0.1.
         """
 
-        # Spacing is actually an offset oops
+        super().__init__()
+
         self.nrows = nrows
         self.ncols = ncols
         self.axes = np.zeros((nrows, ncols), dtype=object)
@@ -641,7 +916,6 @@ class WaterFallGrid:
         for i in range(self.nrows):
             for j in range(self.ncols):
                 ax = WaterFallAxes(
-                    data[i, j],
                     0.75,
                     0.75,
                     bottoms[i],
@@ -651,10 +925,12 @@ class WaterFallGrid:
                     show_ts=True,
                     show_spec=True,
                     labels_on=labels,
+                )
+                ax.plot(
+                    data[i, j],
                     title=titles[i, j],
                     readjust_title=adjust_t,
                 )
-                ax.plot()
                 ax.plot_time_peaks(peaks[i, j], color, show_thres)
                 self.axes[i, j] = ax
 
