@@ -430,6 +430,8 @@ class WaterFallAxes:
         freq_series (np.ndarray): Frequency series data (sum over time).
     """
 
+    cmap = "gist_yarg"
+
     def __init__(
         self,
         data: DataReader,
@@ -526,7 +528,7 @@ class WaterFallAxes:
         """
         self.im.imshow(
             self._data.data_full,
-            cmap="gist_yarg",
+            cmap=self.cmap,
             aspect="auto",
             origin="lower",
             extent=[
@@ -551,6 +553,12 @@ class WaterFallAxes:
             color (str): Color for the vertical lines and scatter points.
             show_thres (bool): Whether to show the threshold on the time series plot.
         """
+        if peaks is None:
+            return
+
+        if type(peaks) == Peaks:
+            if peaks.peaks is None or len(peaks.peaks) == 0:
+                return
 
         for x in peaks.peaks:
             self.im.axvline(self._data.times[x], color=color, linestyle="--", alpha=0.5)
