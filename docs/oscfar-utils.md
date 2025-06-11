@@ -44,6 +44,26 @@ each category in separate figure windows\.
 
 - `list[str]`: A sorted list of all available colormap names\.
 
+<a name="oscfar-utils-make_json_serializable"></a>
+### 🅵 oscfar\.utils\.make\_json\_serializable
+
+```python
+def make_json_serializable(obj):
+```
+
+Recursively converts non-JSON serializable objects \(primarily NumPy arrays\)
+
+within a data structure to their JSON serializable equivalents\.
+
+**Parameters:**
+
+- **obj**: The object to convert\. This can be a NumPy array,
+a dictionary, a list, or any other JSON serializable type\.
+
+**Returns:**
+
+- A new object with NumPy arrays converted to lists,
+suitable for JSON serialization\
 
 ### Classes
 {: .text-delta }
@@ -524,3 +544,80 @@ Returns the 'fit\_logistics' section of the fitburst results\.
 **Returns:**
 
 - `dict`: A dictionary containing fit logistics\.
+
+<a name="oscfar-utils-FitburstResultsWriter"></a>
+### 🅲 oscfar\.utils\.FitburstResultsWriter
+
+```python
+class FitburstResultsWriter:
+```
+
+Class to write and save results from a fitburst LSFitter object to a JSON file\.
+
+**Attributes:**
+
+- **info** (`LSFitter`): The LSFitter object containing the fit results\.
+
+**Functions:**
+
+<a name="oscfar-utils-FitburstResultsWriter-__init__"></a>
+#### 🅵 oscfar\.utils\.FitburstResultsWriter\.\_\_init\_\_
+
+```python
+def __init__(self, info: LSFitter):
+```
+
+Initializes the FitburstResultsWriter with an LSFitter object\.
+
+**Parameters:**
+
+- **info** (`LSFitter`): An instance of the LSFitter class containing the
+results of a fitburst analysis\.
+<a name="oscfar-utils-FitburstResultsWriter-get_fit_statistics"></a>
+#### 🅵 oscfar\.utils\.FitburstResultsWriter\.get\_fit\_statistics
+
+```python
+def get_fit_statistics(self):
+```
+
+Returns the 'fit\_statistics' section from the LSFitter object\.
+
+**Returns:**
+
+- `dict`: A dictionary containing fit statistics\.
+<a name="oscfar-utils-FitburstResultsWriter-get_model_parameters"></a>
+#### 🅵 oscfar\.utils\.FitburstResultsWriter\.get\_model\_parameters
+
+```python
+def get_model_parameters(self):
+```
+
+Returns the 'model\_parameters' section from the LSFitter object's model\.
+
+**Returns:**
+
+- `dict`: A dictionary containing model parameters\.
+<a name="oscfar-utils-FitburstResultsWriter-get_fit_logistics"></a>
+#### 🅵 oscfar\.utils\.FitburstResultsWriter\.get\_fit\_logistics
+
+```python
+def get_fit_logistics(self):
+```
+
+Returns the 'fit\_logistics' section from the LSFitter object\.
+
+**Returns:**
+
+- `dict`: A dictionary containing fit logistics\.
+<a name="oscfar-utils-FitburstResultsWriter-save"></a>
+#### 🅵 oscfar\.utils\.FitburstResultsWriter\.save
+
+```python
+def save(self, filepath: str):
+```
+
+Saves the fitburst results to a JSON file\.
+
+**Parameters:**
+
+- **filepath** (`str`): The path to the JSON file where the results will be saved\.

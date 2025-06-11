@@ -1,3 +1,4 @@
+from fitburst.analysis.fitter import LSFitter
 from fitburst.backend.generic import DataReader
 import numpy as np
 import pandas as pd
@@ -1047,3 +1048,120 @@ class FitburstResultsReader:
         """
 
         return self.results["fit_logistics"]
+
+
+class FitburstResultsWriter:
+    """
+    Class to write and save results from a fitburst LSFitter object to a JSON file.
+
+    Attributes:
+        info (LSFitter): The LSFitter object containing the fit results.
+    """
+
+    def __init__(self, info: LSFitter):
+        """
+        Initializes the FitburstResultsWriter with an LSFitter object.
+
+        Args:
+            info (LSFitter): An instance of the LSFitter class containing the
+                             results of a fitburst analysis.
+        """
+
+        self.info = info
+
+    def get_fit_statistics(self):
+        """
+        Returns the 'fit_statistics' section from the LSFitter object.
+
+        Returns:
+            dict: A dictionary containing fit statistics.
+        """
+
+        return self.info.fit_statistics
+
+    def get_model_parameters(self):
+        """
+        Returns the 'model_parameters' section from the LSFitter object's model.
+
+        Returns:
+            dict: A dictionary containing model parameters.
+        """
+
+        return self.info.model.get_parameters_dict()
+
+    def get_fit_logistics(self):
+        """
+        Returns the 'fit_logistics' section from the LSFitter object.
+
+        Returns:
+            dict: A dictionary containing fit logistics.
+        """
+
+        return {"weight_range": self.info.weight_range}
+
+    def save(self, filepath: str):
+        """
+        Saves the fitburst results to a JSON file.
+
+        Args:
+            filepath (str): The path to the JSON file where the results will be saved.
+        """
+
+        with open(filepath, "w") as f:
+            json.dump(
+                make_json_serializable(
+                    {
+                        "initial_dm": self.info.model.dm_incoherent,
+                        "initial_time": self.info.model.times[0],
+                        "fit_statistics": self.get_fit_statistics(),
+                        "model_parameters": self.get_model_parameters(),
+                        "fit_logistics": self.get_fit_logistics(),
+                    }
+                ),
+                f,
+                indent=4,
+            )
+
+
+def make_json_serializable(obj):
+    """
+    Recursively converts non-JSON serializable objects (primarily NumPy arrays)
+    within a data structure to their JSON serializable equivalents.
+
+    Args:
+        obj: The object to convert. This can be a NumPy array,
+             a dictionary, a list, or any other JSON serializable type.
+
+    Returns:
+        A new object with NumPy arrays converted to lists,
+        suitable for JSON serialization.
+    """
+    if isinstance(obj, np.ndarray):
+        return obj.tolist()
+    elif isinstance(obj, dict):
+        return {key: make_json_serializable(value) for key, value in obj.items()}
+    elif isinstance(obj, (list, tuple)):
+        return [make_json_serializable(item) for item in obj]
+    elif isinstance(
+        obj,
+        (
+            np.bool_,
+            np.int_,
+            np.intc,
+            np.intp,
+            np.int8,
+            np.int16,
+            np.int32,
+            np.int64,
+            np.uint8,
+            np.uint16,
+            np.uint32,
+            np.uint64,
+            np.float16,
+            np.float32,
+            np.float64,
+        ),
+    ):
+        return obj.item()  # Convert numpy scalar types to native python types
+    else:
+        return obj
