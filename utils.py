@@ -222,7 +222,6 @@ def get_colormaps():
     print("\nColormaps are displayed in separate windows based on their category.")
     return all_cmaps
 
-
 class NpzReader(DataReader):
     """
     Class for reading .npz files containing spectrogram data.
@@ -231,16 +230,14 @@ class NpzReader(DataReader):
 
     Attributes:
         metadata (dict): Metadata associated with the data.
-        downsampling_factor (int): Factor by which the data has been downsampled.
     """
 
-    def __init__(self, fname, factor):
+    def __init__(self, fname):
         """
         Initializes the NpzReader with the given file and downsampling factor.
 
         Args:
             fname (str): Path to the .npz file.
-            factor (int): Downsampling factor applied to the data.
         """
 
         self.fname = fname
@@ -251,28 +248,27 @@ class NpzReader(DataReader):
 
         super().__init__(fname)
         self.load_data()
-        self.downsampling_factor = factor
 
     def __repr__(self):
         """
         Returns a string representation of the NpzReader object.
         """
 
-        return f"{self.__class__.__name__}(fname='{self.fname}', file_downsampling={self.downsampling_factor})"
+        return f"{self.__class__.__name__}(fname='{self.fname}')"
 
     def __str__(self):
         """
         Returns a string representation of the NpzReader object.
         """
 
-        return f"(fname='{self.fname}', file_downsampling={self.downsampling_factor})"
+        return f"(fname='{self.fname}')"
 
 
-class NpzWriter(DataReader):
+class NpzWriter(NpzReader):
     """
     Class for writing and manipulating .npz files containing spectrogram data.
 
-    Inherits from fitburst.backend.generic.DataReader.
+    Inherits from NpzReader.
 
     Attributes:
         burst_parameters (dict): Parameters of the burst, such as amplitude,

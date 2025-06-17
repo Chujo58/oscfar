@@ -1,7 +1,7 @@
 import numpy as np
 
 # Package to do OS-CFAR + Useful filters
-__version__ = "1.1.14"
+__version__ = "1.1.15"
 
 from . import cfar
 from . import filters
@@ -65,37 +65,32 @@ def do_os_cfar(
     smoothing="mean",
     lowess_frac=0.01,
     clustering=False,
+    clustering_cutoff=0.7,
 ):
     """
-    Performs OS-CFAR detection on 2D data (spectrogram), typically summed along
-    the frequency axis to get a time series, and applies various filtering steps.
+    Perform OS-CFAR detection and post-processing on 2D array data.
+
+    This function applies Ordered Statistics CFAR (OS-CFAR) detection to a 2D input array
+    (e.g., a spectrogram), typically by summing along one axis to produce a 1D time series.
+    It then applies smoothing, peak detection, SNR filtering, baseline removal, and optional clustering.
 
     Args:
-        data (np.ndarray): 2D array of input data (e.g., spectrogram, frequency x time).
-                           Assumed to be in linear power.
-        guard_cells (int): Number of guard cells on EACH side of the CUT for OS-CFAR.
-        train_cells (int): Number of training cells on EACH side of the CUT for OS-CFAR.
-        rank_k (float): The rank (as a fraction of total training cells) for OS-CFAR.
-                        E.g., 0.75 for the 75th percentile.
-        threshold_factor (float): The scaling factor (alpha) for the OS-CFAR threshold.
-        averaging (int): Window size for the initial smoothing filter (mean or median).
-        min_dist (int): Minimum distance (in samples) between final detected peaks.
-        min_snr (float): Minimum local SNR required for a peak to be kept.
-        baseline (float): Secondary threshold factor applied to the mean time series
-                          to remove peaks too close to the baseline.
-        smoothing (str, optional): Type of initial smoothing to apply to the summed
-                                   time series ('mean', 'median', 'lowess', or None).
-                                   Defaults to 'mean'.
-        lowess_frac (float, optional): Fraction of data used for LOWESS smoothing
-                                       if smoothing='lowess'. Defaults to 0.01.
-        clustering (int or bool, optional): If an integer > 0, applies DBSCAN clustering
-                                            to the final peaks using this integer as
-                                            the 'min_samples' parameter. If False or 0,
-                                            no clustering is applied. Defaults to False.
+        data (np.ndarray): 2D input array (e.g., frequency x time), assumed to be linear power.
+        guard_cells (int): Number of guard cells on each side of the cell under test (CUT).
+        train_cells (int): Number of training cells on each side of the CUT.
+        rank_k (float): Fraction (0-1) of training cells to use for the OS-CFAR rank (e.g., 0.75 for 75th percentile).
+        threshold_factor (float): Scaling factor (alpha) for the OS-CFAR threshold.
+        averaging (int): Window size for initial smoothing (mean or median).
+        min_dist (int): Minimum distance (in samples) between detected peaks.
+        min_snr (float): Minimum SNR required for a peak to be kept.
+        baseline (float): Threshold factor for removing peaks close to the baseline.
+        smoothing (str, optional): Smoothing method for the time series ('mean', 'median', 'lowess', or None). Default is 'mean'.
+        lowess_frac (float, optional): Fraction of data for LOWESS smoothing if used. Default is 0.01.
+        clustering (int or bool, optional): If int > 0, applies DBSCAN clustering to peaks with this as min_samples. Default is False.
+        clustering_cutoff (float, optional): Cutoff value for clustering. Default is 0.7.
 
     Returns:
-        Peaks: A Peaks object containing the final detected peak indices and the
-               original OS-CFAR threshold array.
+        Peaks: Peaks object containing detected peak indices and the OS-CFAR threshold array.
 
     Raises:
         TypeError: If input data is not a 2D NumPy array.
@@ -135,6 +130,6 @@ def do_os_cfar(
     pk = baseline_filter(mts, pk, stdev, baseline)
 
     if type(clustering) == int and clustering != 0:
-        pk = cluster.cluster_peaks(pk, filtered[pk], clustering)
+        pk = cluster.cluster_peaks(pk, filtered[pk], clustering, clustering_cutoff)
 
     return peaks((pk, res[1]))

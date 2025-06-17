@@ -68,7 +68,6 @@ suitable for JSON serialization\
 ### Classes
 {: .text-delta }
 
-
 <a name="oscfar-utils-NpzReader"></a>
 ### 🅲 oscfar\.utils\.NpzReader
 
@@ -83,7 +82,6 @@ Inherits from fitburst\.backend\.generic\.DataReader\.
 **Attributes:**
 
 - **metadata** (`dict`): Metadata associated with the data\.
-- **downsampling_factor** (`int`): Factor by which the data has been downsampled\.
 
 **Functions:**
 
@@ -91,7 +89,7 @@ Inherits from fitburst\.backend\.generic\.DataReader\.
 #### 🅵 oscfar\.utils\.NpzReader\.\_\_init\_\_
 
 ```python
-def __init__(self, fname, factor):
+def __init__(self, fname):
 ```
 
 Initializes the NpzReader with the given file and downsampling factor\.
@@ -99,7 +97,6 @@ Initializes the NpzReader with the given file and downsampling factor\.
 **Parameters:**
 
 - **fname** (`str`): Path to the \.npz file\.
-- **factor** (`int`): Downsampling factor applied to the data\.
 <a name="oscfar-utils-NpzReader-__repr__"></a>
 #### 🅵 oscfar\.utils\.NpzReader\.\_\_repr\_\_
 
@@ -108,24 +105,17 @@ def __repr__(self):
 ```
 
 Returns a string representation of the NpzReader object\.
-<a name="oscfar-utils-NpzReader-__str__"></a>
-#### 🅵 oscfar\.utils\.NpzReader\.\_\_str\_\_
 
-```python
-def __str__(self):
-```
-
-Returns a string representation of the NpzReader object\.
 <a name="oscfar-utils-NpzWriter"></a>
 ### 🅲 oscfar\.utils\.NpzWriter
 
 ```python
-class NpzWriter(DataReader):
+class NpzWriter(NpzReader):
 ```
 
 Class for writing and manipulating \.npz files containing spectrogram data\.
 
-Inherits from fitburst\.backend\.generic\.DataReader\.
+Inherits from NpzReader\.
 
 **Attributes:**
 
