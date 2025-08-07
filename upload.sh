@@ -44,7 +44,7 @@ fi
 echo "Running commands in Conda environment: $CONDA_DEFAULT_ENV"
 python reload.py $version
 python -m build
-twine upload dist/*
+twine upload dist/* --repository oscfar
 
 echo "Waiting for 3 seconds before staging..."
 sleep 3

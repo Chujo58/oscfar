@@ -28,7 +28,7 @@ def cluster_peaks_p(peak_positions, peak_heights, n, max_e=0.7, verbose=False):
     """
 
     scaler = StandardScaler()
-    scaled_peak_data = scaler.fit_transform(peak_positions)
+    scaled_peak_data = scaler.fit_transform(np.array(peak_positions).reshape(-1, 1))
 
     dbscan = DBSCAN(max_e, min_samples=n)
     dbscan_cluster_labels = dbscan.fit_predict(scaled_peak_data)
