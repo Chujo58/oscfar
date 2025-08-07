@@ -1,7 +1,7 @@
 import numpy as np
 
 # Package to do OS-CFAR + Useful filters
-__version__ = "1.1.15"
+__version__ = "1.1.16"
 
 from . import cfar
 from . import filters
@@ -130,6 +130,6 @@ def do_os_cfar(
     pk = baseline_filter(mts, pk, stdev, baseline)
 
     if type(clustering) == int and clustering != 0:
-        pk = cluster.cluster_peaks(pk, filtered[pk], clustering, clustering_cutoff)
+        pk = cluster.cluster_peaks_ph(pk, filtered[pk], clustering, clustering_cutoff)
 
     return peaks((pk, res[1]))
