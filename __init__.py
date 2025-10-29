@@ -1,7 +1,7 @@
 import numpy as np
 
 # Package to do OS-CFAR + Useful filters
-__version__ = "1.1.17"
+__version__ = "1.1.18"
 
 from . import cfar
 from . import filters
@@ -33,6 +33,9 @@ waterfall_axes = utils.WaterFallAxes
 waterfall_grid = utils.WaterFallGrid
 npz_reader = utils.NpzReader
 npz_writer = utils.NpzWriter
+
+reader = utils.NpzReader
+writer = utils.NpzWriter
 
 # Gaussian functions
 multi_gaussian = gaussian_fit.sum_of_gaussians

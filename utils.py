@@ -658,7 +658,10 @@ class WaterFallImage:
                                     which uses the matplotlib default.
         """
 
-        plt.show(block)
+        try:
+            plt.show(block=block)
+        except:
+            plt.show()
 
     def save(self, fname):
         """
