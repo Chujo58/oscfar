@@ -1,7 +1,7 @@
 import numpy as np
 
 # Package to do OS-CFAR + Useful filters
-__version__ = "1.1.18"
+__version__ = "1.1.19"
 
 from . import cfar
 from . import filters
@@ -34,6 +34,7 @@ waterfall_grid = utils.WaterFallGrid
 npz_reader = utils.NpzReader
 npz_writer = utils.NpzWriter
 
+# Other values for utilities
 reader = utils.NpzReader
 writer = utils.NpzWriter
 
@@ -45,7 +46,7 @@ grid_search_gaussian = gaussian_fit.find_best_multi_gaussian_fit
 # Other utilities
 best_params = {
     "guard_cells": 1,
-    "train_cells": 8,
+    "train_cells": 8
     "rank_k": 0.75,
     "threshold_factor": 0.9,
     "averaging": 2,
