@@ -249,6 +249,68 @@ class NpzReader(DataReader):
         super().__init__(fname)
         self.load_data()
 
+    def load_data(self):
+        """
+        Load data from a generic .npz file and close the handle promptly.
+        """
+        with np.load(self.file_path, allow_pickle=True) as unpacked_data_set:
+            # ensure required subfiles are present
+            expected_subfile_names = ["data_full", "metadata", "burst_parameters"]
+            retrieved_subfile_names = unpacked_data_set.files
+            if not all(
+                [f in retrieved_subfile_names for f in expected_subfile_names]
+            ):
+                raise AssertionError(
+                    "Data file does not contain one of more of the following keys: "
+                    f"{expected_subfile_names}"
+                )
+
+            metadata = unpacked_data_set["metadata"].item()
+            burst_parameters = unpacked_data_set["burst_parameters"].item()
+
+            # fitburst expects each parameter to be a list (supports components)
+            for key, value in burst_parameters.items():
+                if not isinstance(value, list):
+                    self.burst_parameters[key] = [value]
+                else:
+                    self.burst_parameters[key] = value
+
+            self.data_full = unpacked_data_set["data_full"]
+
+        # derive time information from loaded data.
+        self.num_freq, self.num_time = self.data_full.shape
+        if self.num_freq != metadata["num_freq"]:
+            raise AssertionError(
+                "Data shape does not match recorded number of channels"
+                f"({self.num_freq} != {metadata['nchan']})"
+            )
+        if self.num_time != metadata["num_time"]:
+            raise AssertionError(
+                "Data shape does not match recorded number of time samples"
+                f"({self.num_time} != {metadata['ntime']})"
+            )
+
+        # create the weights array, where True = masked
+        self.data_weights = np.ones((self.num_freq, self.num_time), dtype=float)
+        rfi_mask = metadata["bad_chans"]
+        self.data_weights[rfi_mask, :] = 0.0
+
+        # create time sample labels from data shape and metadata
+        self.res_time = metadata["res_time"]
+        times = np.arange(self.num_time, dtype=np.float64) * self.res_time
+        self.times = times
+        self.times_bin0 = metadata["times_bin0"]
+
+        # create frequency channel centre labels from data shape and metadata
+        self.res_freq = metadata["res_freq"]
+        freqs = np.arange(self.num_freq, dtype=np.float64) * self.res_freq
+        freqs += metadata["freqs_bin0"]
+        freqs += self.res_freq / 2.0
+        self.freqs = freqs
+
+        # store boolean that indicates if input data is already dedispersed or not.
+        self.is_dedispersed = metadata["is_dedispersed"]
+
     def __repr__(self):
         """
         Returns a string representation of the NpzReader object.
