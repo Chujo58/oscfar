@@ -172,8 +172,7 @@ and that the array dimensions are consistent with each other\.
 
 **Returns:**
 
-- `tuple`: A tuple containing \(data, times, freqs, num\_freq, num\_time\)
-- data \(np\.ndarray\): 2D numpy array of shape \(num\_freq, num\_time\)
+- `- data (np.ndarray)`: 2D numpy array of shape \(num\_freq, num\_time\)
 - times \(np\.ndarray\): 1D numpy array of time values
 - freqs \(np\.ndarray\): 1D numpy array of frequency values
 - num\_freq \(int\): Number of frequencies \(rows in data\)

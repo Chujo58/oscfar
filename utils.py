@@ -418,12 +418,11 @@ class NpzWriter(NpzReader):
             times: Array-like object of length num_time containing time values.
             freqs: Array-like object of length num_freq containing frequency values.
         Returns:
-            tuple: A tuple containing (data, times, freqs, num_freq, num_time)
-                - data (np.ndarray): 2D numpy array of shape (num_freq, num_time)
-                - times (np.ndarray): 1D numpy array of time values
-                - freqs (np.ndarray): 1D numpy array of frequency values
-                - num_freq (int): Number of frequencies (rows in data)
-                - num_time (int): Number of time points (columns in data)
+            - data (np.ndarray): 2D numpy array of shape (num_freq, num_time)
+            - times (np.ndarray): 1D numpy array of time values
+            - freqs (np.ndarray): 1D numpy array of frequency values
+            - num_freq (int): Number of frequencies (rows in data)
+            - num_time (int): Number of time points (columns in data)
         Raises:
             ValueError: If data is not 2D, or if times or freqs are not 1D arrays.
             AssertionError: If the length of times does not match data's time dimension,

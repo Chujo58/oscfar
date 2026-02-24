@@ -150,3 +150,77 @@ Returns:
 
 Raises:
     \(Same as the single-process version\)
+<a name="oscfar-generate_docs"></a>
+## 🅼 oscfar\.generate\_docs
+
+- **Constants:**
+  - 🆅 [MODULE\_ORDER](#oscfar-generate_docs-MODULE_ORDER)
+  - 🆅 [DOC\_TARGETS](#oscfar-generate_docs-DOC_TARGETS)
+- **Functions:**
+  - 🅵 [parse\_args](#oscfar-generate_docs-parse_args)
+  - 🅵 [find\_anchor\_block](#oscfar-generate_docs-find_anchor_block)
+  - 🅵 [normalize\_module\_block](#oscfar-generate_docs-normalize_module_block)
+  - 🅵 [get\_existing\_front\_matter](#oscfar-generate_docs-get_existing_front_matter)
+  - 🅵 [default\_front\_matter](#oscfar-generate_docs-default_front_matter)
+  - 🅵 [write\_module\_docs](#oscfar-generate_docs-write_module_docs)
+  - 🅵 [main](#oscfar-generate_docs-main)
+
+### Constants
+
+<a name="oscfar-generate_docs-MODULE_ORDER"></a>
+### 🆅 oscfar\.generate\_docs\.MODULE\_ORDER
+
+```python
+MODULE_ORDER = ['oscfar', 'oscfar-cfar', 'oscfar-cluster', 'oscfar-filters', 'oscfar-gaussian_fit', 'oscfar-reload', 'oscfar-setup', 'oscfar-utils']
+```
+<a name="oscfar-generate_docs-DOC_TARGETS"></a>
+### 🆅 oscfar\.generate\_docs\.DOC\_TARGETS
+
+```python
+DOC_TARGETS = {'oscfar': {'file': 'oscfar.md', 'title': 'General functions', 'nav_order': 1}, 'oscfar-cfar': {'file': 'oscfar-cfar.md', 'title': 'CFAR Algorithms', 'nav_order': 2}, 'oscfar-filters': {'file': 'oscfar-filters.md', 'title': 'Filtering', 'nav_order': 3}, 'oscfar-cluster': {'file': 'oscfar-cluster.md', 'title': 'Clustering', 'nav_order': 4}, 'oscfar-gaussian_fit': {'file': 'oscfar-gaussian.md', 'title': 'Fitting', 'nav_order': 5}, 'oscfar-utils': {'file': 'oscfar-utils.md', 'title': 'Utilities', 'nav_order': 6}}
+```
+
+### Functions
+
+<a name="oscfar-generate_docs-parse_args"></a>
+### 🅵 oscfar\.generate\_docs\.parse\_args
+
+```python
+def parse_args() -> argparse.Namespace:
+```
+<a name="oscfar-generate_docs-find_anchor_block"></a>
+### 🅵 oscfar\.generate\_docs\.find\_anchor\_block
+
+```python
+def find_anchor_block(content: str, anchor: str, anchor_positions: dict[str, int]) -> str:
+```
+<a name="oscfar-generate_docs-normalize_module_block"></a>
+### 🅵 oscfar\.generate\_docs\.normalize\_module\_block
+
+```python
+def normalize_module_block(block: str) -> str:
+```
+<a name="oscfar-generate_docs-get_existing_front_matter"></a>
+### 🅵 oscfar\.generate\_docs\.get\_existing\_front\_matter
+
+```python
+def get_existing_front_matter(path: Path) -> str | None:
+```
+<a name="oscfar-generate_docs-default_front_matter"></a>
+### 🅵 oscfar\.generate\_docs\.default\_front\_matter
+
+```python
+def default_front_matter(title: str, nav_order: int) -> str:
+```
+<a name="oscfar-generate_docs-write_module_docs"></a>
+### 🅵 oscfar\.generate\_docs\.write\_module\_docs
+
+```python
+def write_module_docs(content: str, docs_dir: Path) -> None:
+```
+<a name="oscfar-generate_docs-main"></a>
+### 🅵 oscfar\.generate\_docs\.main
+
+```python
+def main() -> None:
+```
