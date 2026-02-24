@@ -222,6 +222,7 @@ def get_colormaps():
     print("\nColormaps are displayed in separate windows based on their category.")
     return all_cmaps
 
+
 class NpzReader(DataReader):
     """
     Class for reading .npz files containing spectrogram data.
@@ -257,9 +258,7 @@ class NpzReader(DataReader):
             # ensure required subfiles are present
             expected_subfile_names = ["data_full", "metadata", "burst_parameters"]
             retrieved_subfile_names = unpacked_data_set.files
-            if not all(
-                [f in retrieved_subfile_names for f in expected_subfile_names]
-            ):
+            if not all([f in retrieved_subfile_names for f in expected_subfile_names]):
                 raise AssertionError(
                     "Data file does not contain one of more of the following keys: "
                     f"{expected_subfile_names}"
@@ -385,11 +384,11 @@ class NpzWriter(NpzReader):
                 "spectral_index": [self.def_spectral_index],
                 "spectral_running": [self.def_spectral_running],
             }
-            logger.warning(f"Please use function .set_data to setup the data.")
+            logger.warning("Please use function .set_data to setup the data.")
         else:
             self._making_new_file = False
 
-        if type(file_or_reader) == str:
+        if isinstance(file_or_reader, str):
             self.fname = file_or_reader
 
             temp = np.load(file_or_reader, allow_pickle=True)
@@ -399,7 +398,7 @@ class NpzWriter(NpzReader):
             super().__init__(file_or_reader)
             self.load_data()
 
-        if type(file_or_reader) == NpzReader:
+        if isinstance(file_or_reader, NpzReader):
             self.fname = file_or_reader.fname
 
             temp = np.load(self.fname, allow_pickle=True)
@@ -408,6 +407,56 @@ class NpzWriter(NpzReader):
 
             super().__init__(file_or_reader.fname)
             self.load_data()
+
+    def validate_and_format_data(self, data, times, freqs):
+        """
+        Validate and format input data, times, and frequencies arrays.
+        Ensures that data is a 2D numpy array, times and freqs are 1D numpy arrays,
+        and that the array dimensions are consistent with each other.
+        Args:
+            data: Array-like object of shape (num_freq, num_time) containing the data values.
+            times: Array-like object of length num_time containing time values.
+            freqs: Array-like object of length num_freq containing frequency values.
+        Returns:
+            tuple: A tuple containing (data, times, freqs, num_freq, num_time)
+                - data (np.ndarray): 2D numpy array of shape (num_freq, num_time)
+                - times (np.ndarray): 1D numpy array of time values
+                - freqs (np.ndarray): 1D numpy array of frequency values
+                - num_freq (int): Number of frequencies (rows in data)
+                - num_time (int): Number of time points (columns in data)
+        Raises:
+            ValueError: If data is not 2D, or if times or freqs are not 1D arrays.
+            AssertionError: If the length of times does not match data's time dimension,
+                           or if the length of freqs does not match data's frequency dimension.
+        """
+
+        if not isinstance(data, np.ndarray):
+            data = np.array(data)
+
+        if data.ndim != 2:
+            raise ValueError("Data must be a 2D array with shape (num_freq, num_time).")
+
+        if not isinstance(times, np.ndarray):
+            times = np.array(times)
+        if not isinstance(freqs, np.ndarray):
+            freqs = np.array(freqs)
+
+        if times.ndim != 1:
+            raise ValueError("times must be a 1D array.")
+        if freqs.ndim != 1:
+            raise ValueError("freqs must be a 1D array.")
+
+        num_freq, num_time = data.shape
+        if len(times) != num_time:
+            raise AssertionError(
+                f"Data shape does not match metadata. {len(times)} != {num_time}"
+            )
+        if len(freqs) != num_freq:
+            raise AssertionError(
+                f"Data shape does not match metadata. {len(freqs)} != {num_freq}"
+            )
+
+        return data, times, freqs, num_freq, num_time
 
     def set_data(self, data, times, freqs, time_res, freq_res, bad_chans=[]):
         """
@@ -427,11 +476,13 @@ class NpzWriter(NpzReader):
                 "This function can only be used when creating a new file."
             )
 
-        if type(data) != np.ndarray:
-            data = np.array(data)
+        data, times, freqs, num_freq, num_time = self.validate_and_format_data(
+            data, times, freqs
+        )
+
         self.data_full = data
-        self.metadata["num_freq"] = self.data_full.shape[0]
-        self.metadata["num_time"] = self.data_full.shape[1]
+        self.metadata["num_freq"] = num_freq
+        self.metadata["num_time"] = num_time
         if len(times) != self.metadata["num_time"]:
             raise AssertionError(
                 f"Data shape does not match metadata. {len(times)} != {self.metadata['num_time']}"
@@ -455,6 +506,76 @@ class NpzWriter(NpzReader):
 
         self.num_freq = self.data_full.shape[0]
         self.num_time = self.data_full.shape[1]
+
+        self.data_weights = np.ones((self.num_freq, self.num_time), dtype=float)
+        self.data_weights[bad_chans, :] = 0
+
+        self.data_loaded = True
+
+    def update_data(
+        self,
+        data,
+        times=None,
+        freqs=None,
+        time_res=None,
+        freq_res=None,
+        bad_chans=None,
+    ):
+        """
+        Updates data and metadata for an existing .npz-backed instance.
+
+        This method is similar to ``set_data`` but is only valid when the
+        writer was initialized from an existing file.
+
+        Args:
+            data (np.ndarray): The spectrogram data (frequency x time).
+            times (np.ndarray, optional): Array of time values for each time
+                sample. Defaults to existing ``self.times``.
+            freqs (np.ndarray, optional): Array of frequency values for each
+                channel. Defaults to existing ``self.freqs``.
+            time_res (float, optional): Time resolution. Defaults to existing
+                ``self.res_time``.
+            freq_res (float, optional): Frequency resolution. Defaults to
+                existing ``self.res_freq``.
+            bad_chans (list, optional): List of bad channel indices. Defaults
+                to existing ``self.metadata['bad_chans']``.
+        """
+        if self._making_new_file:
+            raise RuntimeError(
+                "This function can only be used when loading an existing file."
+            )
+
+        if times is None:
+            times = self.times
+        if freqs is None:
+            freqs = self.freqs
+        if time_res is None:
+            time_res = self.res_time
+        if freq_res is None:
+            freq_res = self.res_freq
+        if bad_chans is None:
+            bad_chans = self.metadata.get("bad_chans", [])
+
+        data, times, freqs, num_freq, num_time = self.validate_and_format_data(
+            data, times, freqs
+        )
+
+        self.data_full = data
+        self.metadata["num_freq"] = num_freq
+        self.metadata["num_time"] = num_time
+        self.metadata["bad_chans"] = bad_chans
+        self.metadata["freqs_bin0"] = freqs[0]
+        self.metadata["times_bin0"] = times[0]
+        self.metadata["res_freq"] = freq_res
+        self.metadata["res_time"] = time_res
+
+        self.times = times
+        self.freqs = freqs
+        self.res_time = time_res
+        self.res_freq = freq_res
+
+        self.num_freq = num_freq
+        self.num_time = num_time
 
         self.data_weights = np.ones((self.num_freq, self.num_time), dtype=float)
         self.data_weights[bad_chans, :] = 0
@@ -629,7 +750,7 @@ class NpzWriter(NpzReader):
 
                         if len(temp) < number_of_components:
                             logger.warning(
-                                f"Using default value {getattr(self, f'def_{param}',0)} for parameter {param} to increase to {number_of_components} components."
+                                f"Using default value {getattr(self, f'def_{param}', 0)} for parameter {param} to increase to {number_of_components} components."
                             )
                             self.burst_parameters[param] += [
                                 getattr(self, f"def_{param}")
