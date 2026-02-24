@@ -38,11 +38,9 @@ noise estimate by to get the threshold\.
 
 **Returns:**
 
-- `tuple`: A tuple containing:
-- detected\_peaks\_indices \(np\.ndarray\): Indices where peaks were detected\.
-- threshold \(np\.ndarray\): The calculated threshold for each cell\.
-                          \(Same size as input data, padded with NaNs
-                           at edges where CFAR wasn't computed\)\.
+- `detected_peaks_indices (np.ndarray)`: Indices where peaks were detected\.
+threshold \(np\.ndarray\): Threshold for each input cell \(NaN at edges
+where CFAR is not computed\)\.
 <a name="oscfar-cfar-variable_window_cfar"></a>
 ### 🅵 oscfar\.cfar\.variable\_window\_cfar
 
@@ -63,7 +61,8 @@ windows are considered homogeneous\.
 
 **Returns:**
 
-- `np.ndarray`: A boolean array indicating detections \(True\) and non-detections \(False\)\.
+- `detections (np.ndarray)`: Boolean array of detections \(True\) and
+non-detections \(False\)\.
 <a name="oscfar-cfar-variable_window_os_cfar_indices"></a>
 ### 🅵 oscfar\.cfar\.variable\_window\_os\_cfar\_indices
 
@@ -86,4 +85,4 @@ windows are considered homogeneous\.
 
 **Returns:**
 
-- `np.ndarray`: An array of indices where detections occurred\.
+- `detection_indices (np.ndarray)`: Indices where detections occurred\.

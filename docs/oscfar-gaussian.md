@@ -38,7 +38,7 @@ The total number of parameters must be a multiple of 3\.
 
 **Returns:**
 
-- `y (np.array)`: The sum of the Gaussian functions evaluated at x\.
+- `y (np.ndarray)`: The sum of the Gaussian functions evaluated at x\.
 
 **Raises:**
 
@@ -69,7 +69,7 @@ The total number of parameters must be a multiple of 4\.
 
 **Returns:**
 
-- `y (np.array)`: The sum of the scattered Gaussian functions evaluated at x\.
+- `y (np.ndarray)`: The sum of the scattered Gaussian functions evaluated at x\.
 
 **Raises:**
 
@@ -105,21 +105,10 @@ to the number of components implied by
 
 **Returns:**
 
-- `dict`: A dictionary containing the results of the fitting process\.
-The dictionary has two keys:
-- 'best\_fit': A dictionary containing the results of the best fit
-              found \(lowest BIC\)\. It includes:
-              - 'n\_components': The number of Gaussian components
-                                in the best fit\.
-              - 'popt': The optimized parameters for the best fit\.
-              - 'pcov': The estimated covariance of popt\.
-              - 'bic': The Bayesian Information Criterion \(BIC\) for
-                       the best fit\.
-              - 'rss': The Residual Sum of Squares for the best fit\.
-- 'all\_fits': A list of dictionaries, each containing the results
-              for a fit with a specific number of components\.
-              Each dictionary in the list has the same structure
-              as 'best\_fit', but for a different number of components\.
+- `fit_results (dict)`: Fitting results with keys:
+- 'best\_fit': Results for the best model \(lowest BIC\), including
+    'n\_components', 'popt', 'pcov', 'bic', and 'rss'\.
+- 'all\_fits': Results for all attempted component counts\.
 
 **Raises:**
 
@@ -146,7 +135,8 @@ Args:
         The number of processes to use\. If None, uses the number of CPU cores\.
 
 Returns:
-    \(Same as the single-process version\)
+    fit\_results \(dict\): Same structure as \`\_process\_model\_fit\`, containing
+        best-fit and all-fit results for the selected model\(s\)\.
 
 Raises:
     \(Same as the single-process version\)

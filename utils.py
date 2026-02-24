@@ -87,7 +87,7 @@ def get_colormaps():
     each category in separate figure windows.
 
     Returns:
-        list[str]: A sorted list of all available colormap names.
+        all_cmaps (list[str]): A sorted list of all available colormap names.
     """
     # Create a simple gradient to display the colormaps
 
@@ -410,23 +410,23 @@ class NpzWriter(NpzReader):
 
     def validate_and_format_data(self, data, times, freqs):
         """
-        Validate and format input data, times, and frequencies arrays.
-        Ensures that data is a 2D numpy array, times and freqs are 1D numpy arrays,
-        and that the array dimensions are consistent with each other.
+        Validate and format data, time, and frequency arrays.
+
         Args:
-            data: Array-like object of shape (num_freq, num_time) containing the data values.
-            times: Array-like object of length num_time containing time values.
-            freqs: Array-like object of length num_freq containing frequency values.
+            data (array-like): Input array with shape (num_freq, num_time).
+            times (array-like): Time values with length num_time.
+            freqs (array-like): Frequency values with length num_freq.
+
         Returns:
-            - data (np.ndarray): 2D numpy array of shape (num_freq, num_time)
-            - times (np.ndarray): 1D numpy array of time values
-            - freqs (np.ndarray): 1D numpy array of frequency values
-            - num_freq (int): Number of frequencies (rows in data)
-            - num_time (int): Number of time points (columns in data)
+            data (np.ndarray): Formatted 2D data array with shape (num_freq, num_time).
+            times (np.ndarray): Formatted 1D time array.
+            freqs (np.ndarray): Formatted 1D frequency array.
+            num_freq (int): Number of frequency channels.
+            num_time (int): Number of time samples.
+
         Raises:
-            ValueError: If data is not 2D, or if times or freqs are not 1D arrays.
-            AssertionError: If the length of times does not match data's time dimension,
-                           or if the length of freqs does not match data's frequency dimension.
+            ValueError: If data is not 2D, or if times/freqs are not 1D.
+            AssertionError: If times/freqs lengths do not match data shape.
         """
 
         if not isinstance(data, np.ndarray):
@@ -521,23 +521,18 @@ class NpzWriter(NpzReader):
         bad_chans=None,
     ):
         """
-        Updates data and metadata for an existing .npz-backed instance.
-
-        This method is similar to ``set_data`` but is only valid when the
-        writer was initialized from an existing file.
+        Update data and metadata for an existing .npz file.
 
         Args:
             data (np.ndarray): The spectrogram data (frequency x time).
-            times (np.ndarray, optional): Array of time values for each time
-                sample. Defaults to existing ``self.times``.
-            freqs (np.ndarray, optional): Array of frequency values for each
-                channel. Defaults to existing ``self.freqs``.
-            time_res (float, optional): Time resolution. Defaults to existing
-                ``self.res_time``.
-            freq_res (float, optional): Frequency resolution. Defaults to
-                existing ``self.res_freq``.
-            bad_chans (list, optional): List of bad channel indices. Defaults
-                to existing ``self.metadata['bad_chans']``.
+            times (np.ndarray, optional): Time values for each sample.
+            freqs (np.ndarray, optional): Frequency values for each channel.
+            time_res (float, optional): Time resolution of the data.
+            freq_res (float, optional): Frequency resolution of the data.
+            bad_chans (list, optional): List of bad channel indices.
+
+        Raises:
+            RuntimeError: If this instance is in new-file creation mode.
         """
         if self._making_new_file:
             raise RuntimeError(
@@ -1205,7 +1200,7 @@ class FitburstResultsReader:
         Returns the 'fit_statistics' section of the fitburst results.
 
         Returns:
-            dict: A dictionary containing fit statistics.
+            fit_statistics (dict): A dictionary containing fit statistics.
         """
 
         return self.results["fit_statistics"]
@@ -1215,7 +1210,7 @@ class FitburstResultsReader:
         Returns the 'model_parameters' section of the fitburst results.
 
         Returns:
-            dict: A dictionary containing model parameters.
+            model_parameters (dict): A dictionary containing model parameters.
         """
 
         return self.results["model_parameters"]
@@ -1225,7 +1220,7 @@ class FitburstResultsReader:
         Returns the 'fit_logistics' section of the fitburst results.
 
         Returns:
-            dict: A dictionary containing fit logistics.
+            fit_logistics (dict): A dictionary containing fit logistics.
         """
 
         return self.results["fit_logistics"]
@@ -1255,7 +1250,7 @@ class FitburstResultsWriter:
         Returns the 'fit_statistics' section from the LSFitter object.
 
         Returns:
-            dict: A dictionary containing fit statistics.
+            fit_statistics (dict): A dictionary containing fit statistics.
         """
 
         return self.info.fit_statistics
@@ -1265,7 +1260,7 @@ class FitburstResultsWriter:
         Returns the 'model_parameters' section from the LSFitter object's model.
 
         Returns:
-            dict: A dictionary containing model parameters.
+            model_parameters (dict): A dictionary containing model parameters.
         """
 
         return self.info.model.get_parameters_dict()
@@ -1275,7 +1270,7 @@ class FitburstResultsWriter:
         Returns the 'fit_logistics' section from the LSFitter object.
 
         Returns:
-            dict: A dictionary containing fit logistics.
+            fit_logistics (dict): A dictionary containing fit logistics.
         """
 
         return {"weight_range": self.info.weight_range}
@@ -1314,8 +1309,7 @@ def make_json_serializable(obj):
              a dictionary, a list, or any other JSON serializable type.
 
     Returns:
-        A new object with NumPy arrays converted to lists,
-        suitable for JSON serialization.
+        serialized_obj (Any): Object converted to JSON-serializable types.
     """
     if isinstance(obj, np.ndarray):
         return obj.tolist()

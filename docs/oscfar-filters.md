@@ -33,7 +33,7 @@ to set the secondary threshold\.
 
 **Returns:**
 
-- `np.ndarray`: Indices of the filtered detections\.
+- `filtered_detections (np.ndarray)`: Indices of filtered detections\.
 <a name="oscfar-filters-median_filter"></a>
 ### 🅵 oscfar\.filters\.median\_filter
 
@@ -52,7 +52,7 @@ by 1 to ensure an odd size\.
 
 **Returns:**
 
-- `np.ndarray`: The median-filtered data array, same shape as input\.
+- `filtered_data (np.ndarray)`: Median-filtered data, same shape as input\.
 
 **Raises:**
 
@@ -82,7 +82,7 @@ less stable\. Defaults to 5\.
 
 **Returns:**
 
-- `np.ndarray`: The low-pass filtered data array, same shape as input\.
+- `filtered_data (np.ndarray)`: Low-pass filtered data, same shape as input\.
 
 **Raises:**
 
@@ -113,7 +113,7 @@ less stable\. Defaults to 5\.
 
 **Returns:**
 
-- `np.ndarray`: The high-pass filtered data array, same shape as input\.
+- `filtered_data (np.ndarray)`: High-pass filtered data, same shape as input\.
 
 **Raises:**
 
@@ -141,9 +141,8 @@ part of the same group\.
 
 **Returns:**
 
-- `list[list[int]]`: A list where each element is a list representing a
-group of close peak indices\. Returns an empty list
-if no peaks are provided\.
+- `groups (list[list[int]])`: Groups of close peak indices\. Returns an
+empty list if no peaks are provided\.
 <a name="oscfar-filters-find_representative_peaks"></a>
 ### 🅵 oscfar\.filters\.find\_representative\_peaks
 
@@ -169,9 +168,8 @@ part of the same group\.
 
 **Returns:**
 
-- `list[int]`: A list containing the index of the maximum peak from
-each identified group\. Returns an empty list if no
-peaks are provided\.
+- `representative_peaks (list[int])`: Index of the maximum peak from each
+identified group\. Returns an empty list if no peaks are provided\.
 <a name="oscfar-filters-verify_peaks_snr"></a>
 ### 🅵 oscfar\.filters\.verify\_peaks\_snr
 
@@ -202,7 +200,7 @@ peak to be considered verified\. Defaults to 3\.0\.
 
 **Returns:**
 
-- `list`: A list of indices corresponding to the verified peaks\.
+- `verified_peaks (list[int])`: Indices corresponding to verified peaks\.
 
 **Raises:**
 
@@ -224,7 +222,7 @@ Refines CFAR detections to enforce a minimum distance between peaks\.
 
 **Returns:**
 
-- List of indices of the final, refined peaks\.
+- `final_peaks_indices (list[int])`: Indices of the final refined peaks\.
 <a name="oscfar-filters-filter_peaks_by_extent_1d"></a>
 ### 🅵 oscfar\.filters\.filter\_peaks\_by\_extent\_1d
 
@@ -245,8 +243,8 @@ are considered extended clutter/scattering and removed\.
 
 **Returns:**
 
-- `list`: A list of filtered peak indices, keeping only those belonging
-to groups with extent \<= max\_extent\.
+- `filtered_peaks (list[int])`: Filtered peak indices belonging to groups
+with extent \<= max\_extent\.
 <a name="oscfar-filters-moving_average_filter"></a>
 ### 🅵 oscfar\.filters\.moving\_average\_filter
 
@@ -270,7 +268,7 @@ but works with even numbers too\. Must be positive\.
 
 **Returns:**
 
-- `np.ndarray`: The smoothed data array, same shape as input\.
+- `filtered_data (np.ndarray)`: Smoothed data array, same shape as input\.
 
 **Raises:**
 
@@ -301,7 +299,7 @@ smoother curves\.
 
 **Returns:**
 
-- `np.ndarray`: The smoothed y-values, corresponding to the xdata points\.
+- `y_smooth (np.ndarray)`: Smoothed y-values corresponding to xdata\.
 
 **Raises:**
 

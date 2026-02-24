@@ -5,8 +5,7 @@ import numpy as np
 
 def cluster_peaks_p(peak_positions, peak_heights, n, max_e=0.7, verbose=False):
     """
-     Cluster peak positions using DBSCAN and select the most prominent peak from each cluster.
-     Parameters
+    Cluster peak positions using DBSCAN and select the most prominent peak from each cluster.
 
     Args:
          peak_positions : array-like, shape (n_samples, n_features)
@@ -19,12 +18,13 @@ def cluster_peaks_p(peak_positions, peak_heights, n, max_e=0.7, verbose=False):
              The maximum distance between two samples for one to be considered as in the neighborhood of the other (epsilon parameter for DBSCAN).
          verbose : bool, optional (default=False)
              If True, prints the number of clusters found by DBSCAN.
-    Returns
-        clustered_peaks : list
-            A list of peak positions, each representing the most prominent peak (highest peak height) from each cluster found by DBSCAN.
-    Notes
+    Returns:
+        clustered_peaks (list): Peak positions corresponding to the most
+            prominent peak in each DBSCAN cluster.
+
+    Notes:
         Peaks labeled as noise by DBSCAN (label -1) are ignored.
-        The function uses StandardScaler to normalize peak positions before clustering.
+        Peak positions are normalized with StandardScaler before clustering.
     """
 
     scaler = StandardScaler()
@@ -76,7 +76,7 @@ def cluster_peaks_ph(peak_positions, peak_heights, n, max_e=0.7, verbose=False):
         verbose (bool, optional): If True, print the number of clusters found. Defaults to False.
 
     Returns:
-        list: A list of representative peak positions, one from each cluster.
+        clustered_peaks (list): Representative peak positions, one from each cluster.
     """
 
     peak_data = np.array((peak_positions, peak_heights)).T

@@ -23,7 +23,7 @@ def sum_of_gaussians(x, *params):
             - stddev: Standard deviation (width) of the Gaussian.
 
     Returns:
-        y (np.array):
+        y (np.ndarray):
             The sum of the Gaussian functions evaluated at x.
 
     Raises:
@@ -80,7 +80,7 @@ def sum_of_scattered_gaussians(x, *params):
             - tau: Scattering timescale.
 
     Returns:
-        y (np.array):
+        y (np.ndarray):
             The sum of the scattered Gaussian functions evaluated at x.
 
     Raises:
@@ -179,21 +179,10 @@ def find_best_multi_gaussian_fit(
                                      `curve_fit` for weighted least squares.
 
     Returns:
-        dict: A dictionary containing the results of the fitting process.
-              The dictionary has two keys:
-              - 'best_fit': A dictionary containing the results of the best fit
-                            found (lowest BIC). It includes:
-                            - 'n_components': The number of Gaussian components
-                                              in the best fit.
-                            - 'popt': The optimized parameters for the best fit.
-                            - 'pcov': The estimated covariance of popt.
-                            - 'bic': The Bayesian Information Criterion (BIC) for
-                                     the best fit.
-                            - 'rss': The Residual Sum of Squares for the best fit.
-              - 'all_fits': A list of dictionaries, each containing the results
-                            for a fit with a specific number of components.
-                            Each dictionary in the list has the same structure
-                            as 'best_fit', but for a different number of components.
+                fit_results (dict): Fitting results with keys:
+                        - 'best_fit': Results for the best model (lowest BIC), including
+                            'n_components', 'popt', 'pcov', 'bic', and 'rss'.
+                        - 'all_fits': Results for all attempted component counts.
 
     Raises:
         ValueError: If `initial_flat_params` is invalid (empty or not a multiple of 3), if `x_data` and `y_data` are empty or have different lengths.
@@ -569,14 +558,13 @@ def _process_model_fit(args):
             Defaults to 1.0. If 0, tau will be fixed at 0 for scattered model (effectively Gaussian).
 
     Returns:
-        dict: A dictionary containing the results of the fitting process.
+        fit_results (dict): Fitting results.
             If `model_to_test` is "gaussian" or "scattered":
-            `{'best_fit': {'model_type': ..., ...}, 'all_fits': [...]}`
+            `{'best_fit': {'model_type': ..., ...}, 'all_fits': [...]}`.
             If `model_to_test` is "both":
             `{'overall_best_fit': {'model_type': ..., ...},
-                'gaussian_results': {'best_fit': ..., 'all_fits': ...},
-                'scattered_results': {'best_fit': ..., 'all_fits': ...}}`
-            The 'best_fit' dict contains 'n_components', 'popt', 'pcov', 'bic', 'rss'.
+              'gaussian_results': {'best_fit': ..., 'all_fits': ...},
+              'scattered_results': {'best_fit': ..., 'all_fits': ...}}`.
 
     Raises:
         ValueError: If `initial_flat_params` is invalid, data is empty/mismatched, or `model_to_test` is an invalid option.
@@ -786,7 +774,8 @@ def find_best_multi_gaussian_fit_combinatorial(
             The number of processes to use. If None, uses the number of CPU cores.
 
     Returns:
-        (Same as the single-process version)
+        fit_results (dict): Same structure as `_process_model_fit`, containing
+            best-fit and all-fit results for the selected model(s).
 
     Raises:
         (Same as the single-process version)

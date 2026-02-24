@@ -23,8 +23,6 @@ def cluster_peaks_p(peak_positions, peak_heights, n, max_e = 0.7, verbose = Fals
 
 Cluster peak positions using DBSCAN and select the most prominent peak from each cluster\.
 
-Parameters
-
 **Parameters:**
 
 - **peak_positions **: array-like, shape \(n\_samples, n\_features\)
@@ -37,6 +35,11 @@ The minimum number of samples in a neighborhood for a point to be considered as 
 The maximum distance between two samples for one to be considered as in the neighborhood of the other \(epsilon parameter for DBSCAN\)\.
 - **verbose **: bool, optional \(default=False\)
 If True, prints the number of clusters found by DBSCAN\.
+
+**Returns:**
+
+- `clustered_peaks (list)`: Peak positions corresponding to the most
+prominent peak in each DBSCAN cluster\.
 <a name="oscfar-cluster-cluster_peaks_ph"></a>
 ### 🅵 oscfar\.cluster\.cluster\_peaks\_ph
 
@@ -58,4 +61,4 @@ of the other\. Defaults to 0\.7\.
 
 **Returns:**
 
-- `list`: A list of representative peak positions, one from each cluster\.
+- `clustered_peaks (list)`: Representative peak positions, one from each cluster\.

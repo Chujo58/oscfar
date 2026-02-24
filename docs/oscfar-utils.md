@@ -40,7 +40,7 @@ each category in separate figure windows\.
 
 **Returns:**
 
-- `list[str]`: A sorted list of all available colormap names\.
+- `all_cmaps (list[str])`: A sorted list of all available colormap names\.
 <a name="oscfar-utils-make_json_serializable"></a>
 ### 🅵 oscfar\.utils\.make\_json\_serializable
 
@@ -59,8 +59,7 @@ a dictionary, a list, or any other JSON serializable type\.
 
 **Returns:**
 
-- A new object with NumPy arrays converted to lists,
-suitable for JSON serialization\.
+- `serialized_obj (Any)`: Object converted to JSON-serializable types\.
 
 ### Classes
 
@@ -159,30 +158,26 @@ Initializes the NpzWriter with the given \.npz file\.
 def validate_and_format_data(self, data, times, freqs):
 ```
 
-Validate and format input data, times, and frequencies arrays\.
-
-Ensures that data is a 2D numpy array, times and freqs are 1D numpy arrays,
-and that the array dimensions are consistent with each other\.
+Validate and format data, time, and frequency arrays\.
 
 **Parameters:**
 
-- **data**: Array-like object of shape \(num\_freq, num\_time\) containing the data values\.
-- **times**: Array-like object of length num\_time containing time values\.
-- **freqs**: Array-like object of length num\_freq containing frequency values\.
+- **data** (`array-like`): Input array with shape \(num\_freq, num\_time\)\.
+- **times** (`array-like`): Time values with length num\_time\.
+- **freqs** (`array-like`): Frequency values with length num\_freq\.
 
 **Returns:**
 
-- `- data (np.ndarray)`: 2D numpy array of shape \(num\_freq, num\_time\)
-- times \(np\.ndarray\): 1D numpy array of time values
-- freqs \(np\.ndarray\): 1D numpy array of frequency values
-- num\_freq \(int\): Number of frequencies \(rows in data\)
-- num\_time \(int\): Number of time points \(columns in data\)
+- `data (np.ndarray)`: Formatted 2D data array with shape \(num\_freq, num\_time\)\.
+times \(np\.ndarray\): Formatted 1D time array\.
+freqs \(np\.ndarray\): Formatted 1D frequency array\.
+num\_freq \(int\): Number of frequency channels\.
+num\_time \(int\): Number of time samples\.
 
 **Raises:**
 
-- **ValueError**: If data is not 2D, or if times or freqs are not 1D arrays\.
-- **AssertionError**: If the length of times does not match data's time dimension,
-or if the length of freqs does not match data's frequency dimension\.
+- **ValueError**: If data is not 2D, or if times/freqs are not 1D\.
+- **AssertionError**: If times/freqs lengths do not match data shape\.
 <a name="oscfar-utils-NpzWriter-set_data"></a>
 #### 🅵 oscfar\.utils\.NpzWriter\.set\_data
 
@@ -208,24 +203,20 @@ Defaults to \[\]\.
 def update_data(self, data, times = None, freqs = None, time_res = None, freq_res = None, bad_chans = None):
 ```
 
-Updates data and metadata for an existing \.npz-backed instance\.
-
-This method is similar to \`\`set\_data\`\` but is only valid when the
-writer was initialized from an existing file\.
+Update data and metadata for an existing \.npz file\.
 
 **Parameters:**
 
 - **data** (`np.ndarray`): The spectrogram data \(frequency x time\)\.
-- **times** (`np.ndarray`): Array of time values for each time
-sample\. Defaults to existing \`\`self\.times\`\`\.
-- **freqs** (`np.ndarray`): Array of frequency values for each
-channel\. Defaults to existing \`\`self\.freqs\`\`\.
-- **time_res** (`float`): Time resolution\. Defaults to existing
-\`\`self\.res\_time\`\`\.
-- **freq_res** (`float`): Frequency resolution\. Defaults to
-existing \`\`self\.res\_freq\`\`\.
-- **bad_chans** (`list`): List of bad channel indices\. Defaults
-to existing \`\`self\.metadata\['bad\_chans'\]\`\`\.
+- **times** (`np.ndarray`): Time values for each sample\.
+- **freqs** (`np.ndarray`): Frequency values for each channel\.
+- **time_res** (`float`): Time resolution of the data\.
+- **freq_res** (`float`): Frequency resolution of the data\.
+- **bad_chans** (`list`): List of bad channel indices\.
+
+**Raises:**
+
+- **RuntimeError**: If this instance is in new-file creation mode\.
 <a name="oscfar-utils-NpzWriter-remove_baseline"></a>
 #### 🅵 oscfar\.utils\.NpzWriter\.remove\_baseline
 
@@ -576,7 +567,7 @@ Returns the 'fit\_statistics' section of the fitburst results\.
 
 **Returns:**
 
-- `dict`: A dictionary containing fit statistics\.
+- `fit_statistics (dict)`: A dictionary containing fit statistics\.
 <a name="oscfar-utils-FitburstResultsReader-get_model_parameters"></a>
 #### 🅵 oscfar\.utils\.FitburstResultsReader\.get\_model\_parameters
 
@@ -588,7 +579,7 @@ Returns the 'model\_parameters' section of the fitburst results\.
 
 **Returns:**
 
-- `dict`: A dictionary containing model parameters\.
+- `model_parameters (dict)`: A dictionary containing model parameters\.
 <a name="oscfar-utils-FitburstResultsReader-get_fit_logistics"></a>
 #### 🅵 oscfar\.utils\.FitburstResultsReader\.get\_fit\_logistics
 
@@ -600,7 +591,7 @@ Returns the 'fit\_logistics' section of the fitburst results\.
 
 **Returns:**
 
-- `dict`: A dictionary containing fit logistics\.
+- `fit_logistics (dict)`: A dictionary containing fit logistics\.
 <a name="oscfar-utils-FitburstResultsWriter"></a>
 ### 🅲 oscfar\.utils\.FitburstResultsWriter
 
@@ -640,7 +631,7 @@ Returns the 'fit\_statistics' section from the LSFitter object\.
 
 **Returns:**
 
-- `dict`: A dictionary containing fit statistics\.
+- `fit_statistics (dict)`: A dictionary containing fit statistics\.
 <a name="oscfar-utils-FitburstResultsWriter-get_model_parameters"></a>
 #### 🅵 oscfar\.utils\.FitburstResultsWriter\.get\_model\_parameters
 
@@ -652,7 +643,7 @@ Returns the 'model\_parameters' section from the LSFitter object's model\.
 
 **Returns:**
 
-- `dict`: A dictionary containing model parameters\.
+- `model_parameters (dict)`: A dictionary containing model parameters\.
 <a name="oscfar-utils-FitburstResultsWriter-get_fit_logistics"></a>
 #### 🅵 oscfar\.utils\.FitburstResultsWriter\.get\_fit\_logistics
 
@@ -664,7 +655,7 @@ Returns the 'fit\_logistics' section from the LSFitter object\.
 
 **Returns:**
 
-- `dict`: A dictionary containing fit logistics\.
+- `fit_logistics (dict)`: A dictionary containing fit logistics\.
 <a name="oscfar-utils-FitburstResultsWriter-save"></a>
 #### 🅵 oscfar\.utils\.FitburstResultsWriter\.save
 

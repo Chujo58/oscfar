@@ -1,4 +1,4 @@
-__version__ = "1.1.23"
+__version__ = "1.1.24"
 
 from setuptools import setup
 

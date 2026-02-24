@@ -19,11 +19,9 @@ def os_cfar_1d(data, guard_cells, train_cells, rank_k, threshold_factor):
                                   noise estimate by to get the threshold.
 
     Returns:
-        tuple: A tuple containing:
-            - detected_peaks_indices (np.ndarray): Indices where peaks were detected.
-            - threshold (np.ndarray): The calculated threshold for each cell.
-                                      (Same size as input data, padded with NaNs
-                                       at edges where CFAR wasn't computed).
+        detected_peaks_indices (np.ndarray): Indices where peaks were detected.
+        threshold (np.ndarray): Threshold for each input cell (NaN at edges
+            where CFAR is not computed).
     """
     if not isinstance(data, np.ndarray) or data.ndim != 1:
         raise ValueError("Input 'data' must be a 1D NumPy array.")
@@ -103,7 +101,8 @@ def variable_window_cfar(
                                        windows are considered homogeneous.
 
     Returns:
-        np.ndarray: A boolean array indicating detections (True) and non-detections (False).
+        detections (np.ndarray): Boolean array of detections (True) and
+            non-detections (False).
     """
     n = len(data)
     detections = np.zeros(n, dtype=bool)
@@ -209,7 +208,7 @@ def variable_window_os_cfar_indices(
         threshold_factor (float): Factor multiplied by the noise estimate for the threshold.
 
     Returns:
-        np.ndarray: An array of indices where detections occurred.
+        detection_indices (np.ndarray): Indices where detections occurred.
     """
     n = len(data)
     detection_indices = []
