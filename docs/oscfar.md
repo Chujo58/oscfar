@@ -6,16 +6,13 @@ nav_order: 1
 ---
 
 <a name="oscfar"></a>
-
 ## 🅼 oscfar
-{: .no_toc }
 
 ### Functions
 {: .no_toc .text-delta }
 
 1. TOC
 {:toc}
-
 
 <a name="oscfar-do_os_cfar"></a>
 ### 🅵 oscfar\.do\_os\_cfar

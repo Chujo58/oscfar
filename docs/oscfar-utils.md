@@ -6,15 +6,13 @@ nav_order: 6
 ---
 
 <a name="oscfar-utils"></a>
-
 ## 🅼 oscfar\.utils
-{: .no_toc }
+
+### Functions
+{: .no_toc .text-delta }
 
 1. TOC
 {:toc}
-
-### Functions
-{: .text-delta}
 
 <a name="oscfar-utils-plot_colormaps"></a>
 ### 🅵 oscfar\.utils\.plot\_colormaps
@@ -43,7 +41,6 @@ each category in separate figure windows\.
 **Returns:**
 
 - `list[str]`: A sorted list of all available colormap names\.
-
 <a name="oscfar-utils-make_json_serializable"></a>
 ### 🅵 oscfar\.utils\.make\_json\_serializable
 
@@ -63,10 +60,9 @@ a dictionary, a list, or any other JSON serializable type\.
 **Returns:**
 
 - A new object with NumPy arrays converted to lists,
-suitable for JSON serialization\
+suitable for JSON serialization\.
 
 ### Classes
-{: .text-delta }
 
 <a name="oscfar-utils-NpzReader"></a>
 ### 🅲 oscfar\.utils\.NpzReader
@@ -97,6 +93,14 @@ Initializes the NpzReader with the given file and downsampling factor\.
 **Parameters:**
 
 - **fname** (`str`): Path to the \.npz file\.
+<a name="oscfar-utils-NpzReader-load_data"></a>
+#### 🅵 oscfar\.utils\.NpzReader\.load\_data
+
+```python
+def load_data(self):
+```
+
+Load data from a generic \.npz file and close the handle promptly\.
 <a name="oscfar-utils-NpzReader-__repr__"></a>
 #### 🅵 oscfar\.utils\.NpzReader\.\_\_repr\_\_
 
@@ -105,7 +109,14 @@ def __repr__(self):
 ```
 
 Returns a string representation of the NpzReader object\.
+<a name="oscfar-utils-NpzReader-__str__"></a>
+#### 🅵 oscfar\.utils\.NpzReader\.\_\_str\_\_
 
+```python
+def __str__(self):
+```
+
+Returns a string representation of the NpzReader object\.
 <a name="oscfar-utils-NpzWriter"></a>
 ### 🅲 oscfar\.utils\.NpzWriter
 
@@ -141,6 +152,38 @@ Initializes the NpzWriter with the given \.npz file\.
 **Parameters:**
 
 - **file_or_reader** (`str or NpzReader`): Path to the \.npz file or NpzReader made for file
+<a name="oscfar-utils-NpzWriter-validate_and_format_data"></a>
+#### 🅵 oscfar\.utils\.NpzWriter\.validate\_and\_format\_data
+
+```python
+def validate_and_format_data(self, data, times, freqs):
+```
+
+Validate and format input data, times, and frequencies arrays\.
+
+Ensures that data is a 2D numpy array, times and freqs are 1D numpy arrays,
+and that the array dimensions are consistent with each other\.
+
+**Parameters:**
+
+- **data**: Array-like object of shape \(num\_freq, num\_time\) containing the data values\.
+- **times**: Array-like object of length num\_time containing time values\.
+- **freqs**: Array-like object of length num\_freq containing frequency values\.
+
+**Returns:**
+
+- `tuple`: A tuple containing \(data, times, freqs, num\_freq, num\_time\)
+- data \(np\.ndarray\): 2D numpy array of shape \(num\_freq, num\_time\)
+- times \(np\.ndarray\): 1D numpy array of time values
+- freqs \(np\.ndarray\): 1D numpy array of frequency values
+- num\_freq \(int\): Number of frequencies \(rows in data\)
+- num\_time \(int\): Number of time points \(columns in data\)
+
+**Raises:**
+
+- **ValueError**: If data is not 2D, or if times or freqs are not 1D arrays\.
+- **AssertionError**: If the length of times does not match data's time dimension,
+or if the length of freqs does not match data's frequency dimension\.
 <a name="oscfar-utils-NpzWriter-set_data"></a>
 #### 🅵 oscfar\.utils\.NpzWriter\.set\_data
 
@@ -159,6 +202,31 @@ Sets the data and metadata for a new \.npz file\.
 - **freq_res** (`float`): Frequency resolution of the data\.
 - **bad_chans** (`list`): List of indices of bad frequency channels\.
 Defaults to \[\]\.
+<a name="oscfar-utils-NpzWriter-update_data"></a>
+#### 🅵 oscfar\.utils\.NpzWriter\.update\_data
+
+```python
+def update_data(self, data, times = None, freqs = None, time_res = None, freq_res = None, bad_chans = None):
+```
+
+Updates data and metadata for an existing \.npz-backed instance\.
+
+This method is similar to \`\`set\_data\`\` but is only valid when the
+writer was initialized from an existing file\.
+
+**Parameters:**
+
+- **data** (`np.ndarray`): The spectrogram data \(frequency x time\)\.
+- **times** (`np.ndarray`): Array of time values for each time
+sample\. Defaults to existing \`\`self\.times\`\`\.
+- **freqs** (`np.ndarray`): Array of frequency values for each
+channel\. Defaults to existing \`\`self\.freqs\`\`\.
+- **time_res** (`float`): Time resolution\. Defaults to existing
+\`\`self\.res\_time\`\`\.
+- **freq_res** (`float`): Frequency resolution\. Defaults to
+existing \`\`self\.res\_freq\`\`\.
+- **bad_chans** (`list`): List of bad channel indices\. Defaults
+to existing \`\`self\.metadata\['bad\_chans'\]\`\`\.
 <a name="oscfar-utils-NpzWriter-remove_baseline"></a>
 #### 🅵 oscfar\.utils\.NpzWriter\.remove\_baseline
 
@@ -534,7 +602,6 @@ Returns the 'fit\_logistics' section of the fitburst results\.
 **Returns:**
 
 - `dict`: A dictionary containing fit logistics\.
-
 <a name="oscfar-utils-FitburstResultsWriter"></a>
 ### 🅲 oscfar\.utils\.FitburstResultsWriter
 

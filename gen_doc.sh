@@ -1,6 +1,12 @@
 #!/bin/bash
+
+set -e
+
 # Define the name of your Conda environment
-CONDA_ENV_NAME="base" 
+CONDA_ENV_NAME="base"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PARENT_DIR="$(dirname "$SCRIPT_DIR")"
+TEMP_DOC_FILE="$SCRIPT_DIR/temp.txt"
 
 # Attempt to source Conda's shell functions to make 'conda activate' available
 _CONDA_ROOT=$(conda info --base)
@@ -23,8 +29,13 @@ fi
 echo "Successfully activated Conda environment: $CONDA_DEFAULT_ENV"
 echo "Running commands in Conda environment: $CONDA_DEFAULT_ENV"
 
-cd ..
-python -m python_docstring_markdown oscfar oscfar/temp.txt
+cd "$PARENT_DIR"
+python -m python_docstring_markdown oscfar "$TEMP_DOC_FILE"
+
+cd "$SCRIPT_DIR"
+python generate_docs.py "$TEMP_DOC_FILE" --docs-dir "$SCRIPT_DIR/docs"
+
+echo "Documentation pages were updated in $SCRIPT_DIR/docs"
 
 # Deactivate the environment at the end of the script (good practice)
 echo "Deactivating Conda environment: $CONDA_DEFAULT_ENV"
