@@ -747,7 +747,7 @@ class NpzWriter(NpzReader):
                                 f"Using default value {getattr(self, f'def_{param}', 0)} for parameter {param} to increase to {number_of_components} components."
                             )
                             self.burst_parameters[param] += [
-                                getattr(self, f"def_{param}")
+                                getattr(self, f"def_{param}", 0)
                             ] * (
                                 number_of_components - len(self.burst_parameters[param])
                             )
